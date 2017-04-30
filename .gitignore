@@ -1,0 +1,12 @@
+.DS_STORE
+*.log
+.coverage-cache
+
+node_modules
+rethinkdb_data
+.happypack
+
+coverage
+
+.idea/
+test/scratchboard.js

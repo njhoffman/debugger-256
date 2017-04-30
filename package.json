@@ -1,0 +1,53 @@
+{
+  "name": "debugger-256",
+  "version": "1.0.0",
+  "description": "A debugging utility based on 'debug' package that supports extended options and 256 colors",
+  "main": "index.js",
+  "scripts": {
+    "lint": "esw lib test",
+    "lint:fix": "npm run lint -- --fix",
+    "lint:watch": "npm run lint -- --watch",
+    "test": "mocha",
+    "test:mochista": "mochista --sourceFilesExclude babel.js --reporter spec --opts ./test/mocha.opts",
+    "test:watch": "mocha --watch --reporter spec",
+    "coverage": "better-npm-run coverage",
+    "coverage:watch": "npm run test:mochista -- --watch"
+  },
+  "betterScripts": {
+    "coverage": {
+      "command": "./node_modules/.bin/istanbul cover --dir ./coverage --report text --report html node_modules/.bin/_mocha -- ./test/**/*.js --opts ./test/mocha.opts --reporter spec",
+      "env": {
+        "NODE_ENV": "test"
+      }
+    }
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "prettyjson-256": "^1.1.5"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-plugin-typecheck": "^3.9.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-register": "^6.24.1",
+    "better-npm-run": "0.0.15",
+    "eslint": "^3.19.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-babel": "^4.1.1",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-node": "^4.2.2",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "eslint-watch": "^3.1.0",
+    "karma": "^1.6.0",
+    "karma-coverage": "^1.1.1",
+    "karma-mocha": "^1.3.0",
+    "karma-mocha-reporter": "^2.2.3",
+    "mocha": "^3.2.0"
+  }
+}
