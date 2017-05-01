@@ -1,14 +1,22 @@
-const pjson = require('prettyjson-256');
-const _ = require('lodash');
+'use strict';
 
-const parseMessages = require('./parser');
-let { options, subsystems } = require('./settings');
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var pjson = require('prettyjson-256');
+var _ = require('lodash');
 
-const render = pjson.init(options);
+var parseMessages = require('./parser');
 
-const findLevel = (subsystem, conf, depth, level) => {
-  const curr = subsystem.slice(0, depth);
-  const next = subsystem.length > depth ? subsystem.slice(0, depth + 1) : null;
+var _require = require('./settings'),
+    options = _require.options,
+    subsystems = _require.subsystems;
+
+var render = pjson.init(options);
+
+var findLevel = function findLevel(subsystem, conf, depth, level) {
+  var curr = subsystem.slice(0, depth);
+  var next = subsystem.length > depth ? subsystem.slice(0, depth + 1) : null;
   if (_.has(conf, curr)) {
     if (typeof _.get(conf, curr) === 'number') {
       return _.get(conf, curr);
@@ -21,32 +29,38 @@ const findLevel = (subsystem, conf, depth, level) => {
   return level;
 };
 
-const debug = (level, subsystem, ...messages) => {
+var debug = function debug(level, subsystem) {
+  for (var _len = arguments.length, messages = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+    messages[_key - 2] = arguments[_key];
+  }
+
   /* TODO: make this overwritten by DEBUG=* environment variable
     nested subsystems delineated by :'s (app:routes:admin)
     set as single number for log level, two numbers comma separated to indicate object logging depth */
-  const conf = require('./config.json');
+  var conf = require('./config.json');
 
-  const confLevel = findLevel(subsystem.split(':'), conf, 1, 6);
+  var confLevel = findLevel(subsystem.split(':'), conf, 1, 6);
   if (level > confLevel) {
     return;
   }
-  const subObj = level === 0 ? { fatal: subsystem } : level === 1 ? { error: subsystem } : level === 2 ? { warn: subsystem } : level === 4 ? { info: subsystem } : level === 5 ? { debug: subsystem } : level === 6 ? { trace: subsystem } : { log: subsystem };
+  var subObj = level === 0 ? { fatal: subsystem } : level === 1 ? { error: subsystem } : level === 2 ? { warn: subsystem } : level === 4 ? { info: subsystem } : level === 5 ? { debug: subsystem } : level === 6 ? { trace: subsystem } : { log: subsystem };
 
   console.log('  ' + render(subObj) + parseMessages(messages, subsystem, render));
 };
 
-export const showColors = () => {
-  _.each(_.keys(options.customColors), key => {
-    console.log(parseMessages([`%Custom Color: ${ key }%`, { color: key }], '', render));
+var showColors = exports.showColors = function showColors() {
+  _.each(_.keys(options.customColors), function (key) {
+    console.log(parseMessages(['%Custom Color: ' + key + '%', { color: key }], '', render));
   });
 };
 
-export const init = customOptions => {
+var init = exports.init = function init(customOptions) {
   options = _.defaultsDeep(options, customOptions);
 };
 
-export const createDebug = (subsystem = '') => {
+var createDebug = exports.createDebug = function createDebug() {
+  var subsystem = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
   subsystems.push(subsystem);
   return {
     fatal: debug.bind(undefined, 0, subsystem),

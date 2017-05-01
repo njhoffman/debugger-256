@@ -1,4 +1,9 @@
-export const options = {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var options = exports.options = {
   /* prettyjson-256 options */
   colors: {
     keys: { fg: [0, 2, 1] },
@@ -37,5 +42,5 @@ export const options = {
   colorTag: 'color'
 };
 
-export const subsystems = [];
+var subsystems = exports.subsystems = [];
 //# sourceMappingURL=settings.js.map
