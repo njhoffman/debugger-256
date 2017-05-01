@@ -1,10 +1,13 @@
+const fs = require('fs');
+const path = require('path');
+const appRoot = require('app-root-path');
 const pjson = require('prettyjson-256');
-const { has, get, keys, each } = require('lodash');
+const { has, get, keys, each} = require('lodash');
 
 const parseMessages = require('./parser');
-const { options, subsystems, conf, initSettings } = require('./settings');
+const { getOptions, subsystems, getConf, initSettings } =  require('./settings');
 
-const render = pjson.init(options);
+const render = pjson.init(getOptions());
 
 // TODO: on load check configuration file for errors
 
@@ -27,6 +30,7 @@ const debug = (level, subsystem, ...messages) => {
   /* TODO: make this overwritten by DEBUG=* environment variable
     nested subsystems delineated by :'s (app:routes:admin)
     set as single number for log level, two numbers comma separated to indicate object logging depth */
+  const conf = getConf();
   if (conf) {
     const confLevel = findLevel(subsystem.split(':'), conf, 1, 6);
     if (level > confLevel) {
@@ -51,7 +55,7 @@ const debug = (level, subsystem, ...messages) => {
 };
 
 export const showColors = () => {
-  each(keys(options.customColors), (key) => {
+  each(keys(getOptions().customColors), (key) => {
     console.log(parseMessages([ `%Custom Color: ${key}%`, { color: key } ], '', render));
   });
 };

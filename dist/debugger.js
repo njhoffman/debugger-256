@@ -3,9 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var fs = require('fs');
-var path = require('path');
-var appRoot = require('app-root-path');
 var pjson = require('prettyjson-256');
 
 var _require = require('lodash'),

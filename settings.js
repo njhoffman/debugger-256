@@ -3,7 +3,16 @@ const path = require('path');
 const { defaultsDeep } = require('lodash');
 const appRoot = require('app-root-path');
 
-export let options = {
+const watchFile = (fileName) => {
+  fs.watchFile(fileName, (curr, prev) => {
+    conf = JSON.parse(fs.readFileSync(fileName));
+    if (conf && conf['_debugger-256']) {
+      defaultsDeep(options, conf['_debugger-256']);
+    }
+  });
+};
+
+let options = {
   /* prettyjson-256 options */
   colors:     {
     keys:    { fg:  [0, 2, 1] },
@@ -42,15 +51,24 @@ export let options = {
   colorTag: 'color'
 };
 
+let conf = false;
+
+export const getOptions = () => options;
+export const getConf = () => conf;
+
 export let subsystems = [];
-export let conf = false;
 
 export const loadConfFile = () => {
   // TODO: become a good programmer
-  if (fs.existsSync(path.resolve(__dirname, '.debugger-256'))) {
-    return JSON.parse(fs.readFileSync(path.resolve(__dirname, '.debugger-256')));
-  } else if (fs.existsSync(path.resolve(appRoot.toString(), '.debugger-256'))) {
-    return JSON.parse(fs.readFileSync(path.resolve(appRoot.toString(), '.debugger-256')));
+  const currPath = path.resolve(__dirname, '.debugger-256');
+  const rootPath = path.resolve(appRoot.toString(), '.debugger-256');
+
+  if (fs.existsSync(currPath)) {
+    watchFile(currPath);
+    return JSON.parse(fs.readFileSync(currPath));
+  } else if (fs.existsSync(rootPath)) {
+    watchFile(rootPath);
+    return JSON.parse(fs.readFileSync(rootPath));
   }
   return false;
 };
@@ -65,3 +83,4 @@ export const initSettings = (customOptions) => {
 };
 
 initSettings();
+
