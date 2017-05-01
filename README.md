@@ -50,6 +50,26 @@ warn('all of these should appear under subsystem1');
 
 Based on the [debug](https://github.com/visionmedia/debug) package modular approach, debugger-256 expects to be initialized with the name of the module or 'subsystem'.  Subsystems should be nested with colons, i.e. 'api:db:user' would indicate the current 'user' module is part of a parent 'db' module which is part of the root subsystem 'api'.  This allows for easy filtering and formatting through the options.
 
+## Options
+
+All options of [prettyjson-256](https://github.com/njhoffman/prettyjson-256) can be passed to the 'init' function, or they can be added to the configuration file described in the next section.  
+
+```javascript
+var createDebug = require('debugger-256')('app');
+var initOptions = {
+  depth: 3,
+  alphabetizeKeys: true,
+  colors: {
+    keys: { fg: [0,3,2] },
+    boolTrue: { bg: [0,2,0] }
+  }
+};
+createDebug.init(initOptions);
+createDebug.log(initOptions);
+```
+
+![Example Output 4](https://raw.github.com/njhoffman/debugger-256/master/docs/debug4.jpg)
+
 ## Configuration file
 
 A configuration file named '.debugger-256' can be put in the root directory of the project to provide global options and filtering.  This file is watched and changes will take effect without requiring a restart of the process.  The file should be JSON format:
