@@ -46,6 +46,9 @@ info('destructing assignmnet is cool');
 warn('all of these should appear under subsystem1');
 
 ```
+## Conventions
+
+Based on the [debug](https://github.com/visionmedia/debug) package modular approach, debugger-256 expects to be initialized with the name of the module or 'subsystem'.  Subsystems should be nested with colons, i.e. 'api:db:user' would indicate the current 'user' module is part of a parent 'db' module which is part of the root subsystem 'api'.  This allows for easy filtering and formatting through the options.
 
 ## Configuration file
 
