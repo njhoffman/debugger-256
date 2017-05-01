@@ -65,7 +65,7 @@ var debug = function debug(level, subsystem) {
     if (level > confLevel) {
       return;
     }
-    conf['debugger-256'] && init(conf['debugger-256']);
+    conf['_debugger-256'] && init(conf['_debugger-256']);
   }
   var subObj = level === 0 ? { fatal: subsystem } : level === 1 ? { error: subsystem } : level === 2 ? { warn: subsystem } : level === 4 ? { info: subsystem } : level === 5 ? { debug: subsystem } : level === 6 ? { trace: subsystem } : { log: subsystem };
 
