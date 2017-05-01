@@ -1,7 +1,7 @@
 .DS_STORE
 *.log
 .coverage-cache
-.debugger-256.js
+.debugger-256
 node_modules
 rethinkdb_data
 .happypack
