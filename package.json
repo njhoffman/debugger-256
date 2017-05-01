@@ -24,7 +24,11 @@
       }
     }
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/njhoffman/debugger-256.git"
+  },
+  "author": "Nick Hoffman",
   "license": "ISC",
   "keywords": [
     "debug",
