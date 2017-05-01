@@ -1,6 +1,6 @@
 {
   "name": "debugger-256",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "description": "A debugging utility based on 'debug' package that supports extended options and 256 colors",
   "main": "dist/debugger.js",
   "scripts": {
