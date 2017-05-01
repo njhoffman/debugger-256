@@ -62,7 +62,7 @@ createDebug.init({
 createDebug.log("The response code returned was %200 - Received% in %50ms%", 
   { color: 'resCode' }, { color: 'resTime' });
 ```
-
+![Example Output 64](https://raw.github.com/njhoffman/debugger-256/master/docs/debug6.jpg)
 
 
 ## Conventions
