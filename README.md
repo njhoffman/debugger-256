@@ -3,7 +3,7 @@
 A debugging tool and wrapper for prettyjson-256 that decorates logging output to the console.
 Reads settings from a user-defined configuration file to control verbosity of different modules or 'subsystems'.
 
-!(https://raw.github.com/njhoffman/debugger-256/master/docs/debug1.jpg)
+![Example Output](https://raw.github.com/njhoffman/debugger-256/master/docs/debug1.jpg)
 
 ## Installation
 
