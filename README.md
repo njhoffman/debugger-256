@@ -16,13 +16,16 @@ $ npm install --save-dev debugger-256
 This module returns a function that is passed an optional subsystem name similar to the debug module.
 It returns 6 logging functions of different levels:
 
-  fatal
-  error
-  warn
-  log
-  info
-  debug
-  trace
+
+  Name | Level
+  --- | ---
+  fatal | 0
+  error | 1
+  warn | 2
+  log | 3
+  info | 4
+  debug | 5
+  trace | 6
 
 Each will output as different color, and optionally be filtered by a configuration file.
 
@@ -46,9 +49,40 @@ warn('all of these should appear under subsystem1');
 
 ## Configuration file
 
-The options that can be passed as customOptions labeled above are as follows (including their defaults):
+A configuration file named '.debugger-256' can be put in the root directory of the project to provide global options and filtering.  This file is watched and changes will take effect without requiring a restart of the process.  The file should be JSON format:
 
-## Examples
+*.debugger-256*
+```json
+ {
+   "app" : {
+     "*" : 2,
+     "response" : 6,
+     "request" : 6
+   }
+ }
+```
+This specifies that messages from 'app:response' and 'app:request' level 6 and lower (all messages) wouldbe output, the '\*':3 specifies that app subsystems that aren't specified should only ouput messages from level and lower (only fatal, error, and warn).  
+
+For example:
+![Example Output]((https://raw.github.com/njhoffman/debugger-256/master/docs/debug2.jpg)
+
+The dark blue lines are from 'log' calls (level 3), the light blue lines with header information are from trace calls (level 6). If we just wanted to show the log lines, change the numbers of the relevant subsystems to the maximum level you want to show (in this case log or level 3).
+
+```json
+ {
+   "app" : {
+     "*" : 2,
+     "response" : 3,
+     "request" : 3
+   }
+ }
+```
+
+Save the file and the filtering will be applied automatically without a server restart.
+
+![Example Output]((https://raw.github.com/njhoffman/debugger-256/master/docs/debug3.jpg)
+
+## Other Examples
 
 ## Running Tests
 
