@@ -5,11 +5,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 var fs = require('fs');
 var path = require('path');
+var appRoot = require('app-root-path');
 
 var _require = require('lodash'),
-    defaultsDeep = _require.defaultsDeep;
-
-var appRoot = require('app-root-path');
+    merge = _require.merge;
 
 var options = exports.options = {
   /* prettyjson-256 options */
@@ -66,9 +65,9 @@ var loadConfFile = exports.loadConfFile = function loadConfFile() {
 var initSettings = exports.initSettings = function initSettings(customOptions) {
   exports.conf = conf = loadConfFile();
   if (customOptions) {
-    defaultsDeep(options, customOptions);
-  }if (conf && conf['_debugger-256']) {
-    defaultsDeep(options, conf['_debugger-256']);
+    merge(options, customOptions);
+  } else if (conf && conf['_debugger-256']) {
+    merge(options, conf['_debugger-256']);
   }
 };
 
