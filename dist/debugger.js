@@ -17,6 +17,8 @@ var _require = require('./settings'),
 
 var render = pjson.init(options);
 
+// TODO: on load check configuration file for errors
+
 var findLevel = function findLevel(subsystem, conf, depth, level) {
   var curr = subsystem.slice(0, depth);
   var next = subsystem.length > depth ? subsystem.slice(0, depth + 1) : null;
@@ -33,10 +35,11 @@ var findLevel = function findLevel(subsystem, conf, depth, level) {
 };
 
 var loadConfFile = function loadConfFile() {
-  if (fs.existsSync(path.resolve(__dirname, './debugger-256'))) {
-    return require(path.resolve(__dirname, '/.debugger-256'));
-  } else if (fs.existsSync(path.resolve(appRoot, '/.debugger-256'))) {
-    return require(path.resolve(appRoot, '/.debugger-256'));
+  // TODO: become a good programmer
+  if (fs.existsSync(path.resolve(__dirname, '.debugger-256'))) {
+    return JSON.parse(fs.readFileSync(path.resolve(__dirname, '.debugger-256')));
+  } else if (fs.existsSync(path.resolve(appRoot.toString(), '.debugger-256'))) {
+    return JSON.parse(fs.readFileSync(path.resolve(appRoot.toString(), '.debugger-256')));
   }
   return false;
 };
