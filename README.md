@@ -64,7 +64,7 @@ A configuration file named '.debugger-256' can be put in the root directory of t
 This specifies that messages from 'app:response' and 'app:request' level 6 and lower (all messages) wouldbe output, the '\*':3 specifies that app subsystems that aren't specified should only ouput messages from level and lower (only fatal, error, and warn).  
 
 For example:
-![Example Output]((https://raw.github.com/njhoffman/debugger-256/master/docs/debug2.jpg)
+![Example Output 2](https://raw.github.com/njhoffman/debugger-256/master/docs/debug2.jpg)
 
 The dark blue lines are from 'log' calls (level 3), the light blue lines with header information are from trace calls (level 6). If we just wanted to show the log lines, change the numbers of the relevant subsystems to the maximum level you want to show (in this case log or level 3).
 
@@ -80,7 +80,7 @@ The dark blue lines are from 'log' calls (level 3), the light blue lines with he
 
 Save the file and the filtering will be applied automatically without a server restart.
 
-![Example Output]((https://raw.github.com/njhoffman/debugger-256/master/docs/debug3.jpg)
+![Example Output 3](https://raw.github.com/njhoffman/debugger-256/master/docs/debug3.jpg)
 
 ## Other Examples
 
