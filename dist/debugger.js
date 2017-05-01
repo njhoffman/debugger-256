@@ -7,13 +7,19 @@ var fs = require('fs');
 var path = require('path');
 var appRoot = require('app-root-path');
 var pjson = require('prettyjson-256');
-var _ = require('lodash');
+
+var _require = require('lodash'),
+    has = _require.has,
+    get = _require.get,
+    keys = _require.keys,
+    each = _require.each,
+    defaultsDeep = _require.defaultsDeep;
 
 var parseMessages = require('./parser');
 
-var _require = require('./settings'),
-    options = _require.options,
-    subsystems = _require.subsystems;
+var _require2 = require('./settings'),
+    options = _require2.options,
+    subsystems = _require2.subsystems;
 
 var render = pjson.init(options);
 
@@ -22,13 +28,13 @@ var render = pjson.init(options);
 var findLevel = function findLevel(subsystem, conf, depth, level) {
   var curr = subsystem.slice(0, depth);
   var next = subsystem.length > depth ? subsystem.slice(0, depth + 1) : null;
-  if (_.has(conf, curr)) {
-    if (typeof _.get(conf, curr) === 'number') {
-      return _.get(conf, curr);
-    } else if (subsystem.length + 1 > depth && _.has(conf, next)) {
+  if (has(conf, curr)) {
+    if (typeof get(conf, curr) === 'number') {
+      return get(conf, curr);
+    } else if (subsystem.length + 1 > depth && has(conf, next)) {
       level = findLevel(subsystem, conf, ++depth, level);
-    } else if (typeof _.get(conf, curr.concat('*')) === 'number') {
-      return _.get(conf, curr.concat('*'));
+    } else if (typeof get(conf, curr.concat('*')) === 'number') {
+      return get(conf, curr.concat('*'));
     }
   }
   return level;
@@ -59,6 +65,7 @@ var debug = function debug(level, subsystem) {
     if (level > confLevel) {
       return;
     }
+    conf['debugger-256'] && init(conf['debugger-256']);
   }
   var subObj = level === 0 ? { fatal: subsystem } : level === 1 ? { error: subsystem } : level === 2 ? { warn: subsystem } : level === 4 ? { info: subsystem } : level === 5 ? { debug: subsystem } : level === 6 ? { trace: subsystem } : { log: subsystem };
 
@@ -66,13 +73,13 @@ var debug = function debug(level, subsystem) {
 };
 
 var showColors = exports.showColors = function showColors() {
-  _.each(_.keys(options.customColors), function (key) {
+  each(keys(options.customColors), function (key) {
     console.log(parseMessages(['%Custom Color: ' + key + '%', { color: key }], '', render));
   });
 };
 
 var init = exports.init = function init(customOptions) {
-  options = _.defaultsDeep(options, customOptions);
+  options = defaultsDeep(options, customOptions);
 };
 
 var createDebug = exports.createDebug = function createDebug() {
