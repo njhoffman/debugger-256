@@ -12,14 +12,15 @@ var _require = require('lodash'),
     has = _require.has,
     get = _require.get,
     keys = _require.keys,
-    each = _require.each,
-    defaultsDeep = _require.defaultsDeep;
+    each = _require.each;
 
 var parseMessages = require('./parser');
 
 var _require2 = require('./settings'),
     options = _require2.options,
-    subsystems = _require2.subsystems;
+    subsystems = _require2.subsystems,
+    conf = _require2.conf,
+    initSettings = _require2.initSettings;
 
 var render = pjson.init(options);
 
@@ -40,16 +41,6 @@ var findLevel = function findLevel(subsystem, conf, depth, level) {
   return level;
 };
 
-var loadConfFile = function loadConfFile() {
-  // TODO: become a good programmer
-  if (fs.existsSync(path.resolve(__dirname, '.debugger-256'))) {
-    return JSON.parse(fs.readFileSync(path.resolve(__dirname, '.debugger-256')));
-  } else if (fs.existsSync(path.resolve(appRoot.toString(), '.debugger-256'))) {
-    return JSON.parse(fs.readFileSync(path.resolve(appRoot.toString(), '.debugger-256')));
-  }
-  return false;
-};
-
 var debug = function debug(level, subsystem) {
   for (var _len = arguments.length, messages = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
     messages[_key - 2] = arguments[_key];
@@ -58,14 +49,11 @@ var debug = function debug(level, subsystem) {
   /* TODO: make this overwritten by DEBUG=* environment variable
     nested subsystems delineated by :'s (app:routes:admin)
     set as single number for log level, two numbers comma separated to indicate object logging depth */
-  var conf = loadConfFile();
-
   if (conf) {
     var confLevel = findLevel(subsystem.split(':'), conf, 1, 6);
     if (level > confLevel) {
       return;
     }
-    conf['_debugger-256'] && init(conf['_debugger-256']);
   }
   var subObj = level === 0 ? { fatal: subsystem } : level === 1 ? { error: subsystem } : level === 2 ? { warn: subsystem } : level === 4 ? { info: subsystem } : level === 5 ? { debug: subsystem } : level === 6 ? { trace: subsystem } : { log: subsystem };
 
@@ -78,10 +66,7 @@ var showColors = exports.showColors = function showColors() {
   });
 };
 
-var init = exports.init = function init(customOptions) {
-  options = defaultsDeep(options, customOptions);
-};
-
+var init = exports.init = initSettings;
 var createDebug = exports.createDebug = function createDebug() {
   var subsystem = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 

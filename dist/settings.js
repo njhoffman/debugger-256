@@ -3,6 +3,14 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+var fs = require('fs');
+var path = require('path');
+
+var _require = require('lodash'),
+    defaultsDeep = _require.defaultsDeep;
+
+var appRoot = require('app-root-path');
+
 var options = exports.options = {
   /* prettyjson-256 options */
   colors: {
@@ -43,4 +51,26 @@ var options = exports.options = {
 };
 
 var subsystems = exports.subsystems = [];
+var conf = exports.conf = false;
+
+var loadConfFile = exports.loadConfFile = function loadConfFile() {
+  // TODO: become a good programmer
+  if (fs.existsSync(path.resolve(__dirname, '.debugger-256'))) {
+    return JSON.parse(fs.readFileSync(path.resolve(__dirname, '.debugger-256')));
+  } else if (fs.existsSync(path.resolve(appRoot.toString(), '.debugger-256'))) {
+    return JSON.parse(fs.readFileSync(path.resolve(appRoot.toString(), '.debugger-256')));
+  }
+  return false;
+};
+
+var initSettings = exports.initSettings = function initSettings(customOptions) {
+  exports.conf = conf = loadConfFile();
+  if (customOptions) {
+    defaultsDeep(options, customOptions);
+  }if (conf && conf['_debugger-256']) {
+    defaultsDeep(options, conf['_debugger-256']);
+  }
+};
+
+initSettings();
 //# sourceMappingURL=settings.js.map
