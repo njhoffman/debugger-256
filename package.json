@@ -2,8 +2,10 @@
   "name": "debugger-256",
   "version": "1.0.2",
   "description": "A debugging utility based on 'debug' package that supports extended options and 256 colors",
-  "main": "lib/debugger.js",
+  "main": "dist/debugger.js",
   "scripts": {
+    "clean": "rm -rf dist && mkdir dist",
+    "build": "babel -d ./dist ./lib -s",
     "lint": "esw lib test",
     "lint:fix": "npm run lint -- --fix",
     "lint:watch": "npm run lint -- --watch",
