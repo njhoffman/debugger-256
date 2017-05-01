@@ -14,7 +14,7 @@ $ npm install --save-dev debugger-256
 ## Usage
 
 This module returns a function that is passed an optional subsystem name similar to the debug module.
-It returns 6 logging functions of different levels:
+It returns 7 logging functions of different levels:
 
 
   Name | Level
@@ -41,11 +41,30 @@ createDebug('app:subsystem2').error('this is an error');
 ES6 usage
 
 ```javascript
-const { error, warn, log, trace } = require('debugger-256')('app:subsystem1');
+const { info, warn } = require('debugger-256')('app:subsystem1');
 info('destructing assignmnet is cool');
 warn('all of these should appear under subsystem1');
 
 ```
+### Inline string coloring
+THe customColors property can be assigned tags with colors during initialization to colorize parts of single line strings.
+
+```javascript
+var createDebug = require('debugger-256')('app');
+createDebug.init({ 
+  customColors: { 
+    resCode: { fg: [3,3,1] },
+    resTime: { fg: [1,2,3] } 
+   }
+});
+// wrap each string section to be colorized in parenthesis, 
+// followed by a list of the customColor tags assigned to the key 'color'
+createDebug.log("The response code returned was %200 - Received% in %50ms%", 
+  { color: 'resCode' }, { color: 'resTime' });
+```
+
+
+
 ## Conventions
 
 Based on the [debug](https://github.com/visionmedia/debug) package modular approach, debugger-256 expects to be initialized with the name of the module or 'subsystem'.  Subsystems should be nested with colons, i.e. 'api:db:user' would indicate the current 'user' module is part of a parent 'db' module which is part of the root subsystem 'api'.  This allows for easy filtering and formatting through the options.
