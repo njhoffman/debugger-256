@@ -63,12 +63,15 @@ var loadConfFile = exports.loadConfFile = function loadConfFile() {
 };
 
 var initSettings = exports.initSettings = function initSettings(customOptions) {
-  exports.conf = conf = loadConfFile();
   if (customOptions) {
     merge(options, customOptions);
-  } else if (conf && conf['_debugger-256']) {
-    merge(options, conf['_debugger-256']);
+  } else {
+    exports.conf = conf = loadConfFile();
+    if (conf && conf['_debugger-256']) {
+      merge(options, conf['_debugger-256']);
+    }
   }
+  return options;
 };
 
 initSettings();

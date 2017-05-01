@@ -63,7 +63,10 @@ var showColors = exports.showColors = function showColors() {
   });
 };
 
-var init = exports.init = initSettings;
+var init = exports.init = function init(customSettings) {
+  pjson.init(initSettings(customSettings));
+};
+
 var createDebug = exports.createDebug = function createDebug() {
   var subsystem = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
