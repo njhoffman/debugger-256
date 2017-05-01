@@ -25,6 +25,14 @@
   },
   "author": "",
   "license": "ISC",
+  "keywords" : [
+    "debug",
+    "debugger",
+    "log",
+    "logger",
+    "console",
+    "inspect"
+  ],
   "dependencies": {
     "app-root-path": "^2.0.1",
     "prettyjson-256": "^1.1.11"
