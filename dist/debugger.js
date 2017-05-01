@@ -3,6 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+var fs = require('fs');
+var path = require('path');
+var appRoot = require('app-root-path');
 var pjson = require('prettyjson-256');
 var _ = require('lodash');
 
@@ -29,6 +32,15 @@ var findLevel = function findLevel(subsystem, conf, depth, level) {
   return level;
 };
 
+var loadConfFile = function loadConfFile() {
+  if (fs.existsSync(path.resolve(__dirname, './debugger-256'))) {
+    return require(path.resolve(__dirname, '/.debugger-256'));
+  } else if (fs.existsSync(path.resolve(appRoot, '/.debugger-256'))) {
+    return require(path.resolve(appRoot, '/.debugger-256'));
+  }
+  return false;
+};
+
 var debug = function debug(level, subsystem) {
   for (var _len = arguments.length, messages = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
     messages[_key - 2] = arguments[_key];
@@ -37,11 +49,13 @@ var debug = function debug(level, subsystem) {
   /* TODO: make this overwritten by DEBUG=* environment variable
     nested subsystems delineated by :'s (app:routes:admin)
     set as single number for log level, two numbers comma separated to indicate object logging depth */
-  var conf = require('./config.json');
+  var conf = loadConfFile();
 
-  var confLevel = findLevel(subsystem.split(':'), conf, 1, 6);
-  if (level > confLevel) {
-    return;
+  if (conf) {
+    var confLevel = findLevel(subsystem.split(':'), conf, 1, 6);
+    if (level > confLevel) {
+      return;
+    }
   }
   var subObj = level === 0 ? { fatal: subsystem } : level === 1 ? { error: subsystem } : level === 2 ? { warn: subsystem } : level === 4 ? { info: subsystem } : level === 5 ? { debug: subsystem } : level === 6 ? { trace: subsystem } : { log: subsystem };
 
