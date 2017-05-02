@@ -1,7 +1,8 @@
 # debugger-256 [![Build Status](https://secure.travis-ci.org/njhoffman/debugger-256.png)](http://travis-ci.org/njhoffman/debugger-256) [![NPM version](https://badge.fury.io/js/debugger-256.png)](http://badge.fury.io/js/debugger-256)
 
-A debugging tool and wrapper for prettyjson-256 that decorates logging output to the console.
-Reads settings from a user-defined configuration file to control verbosity of different modules or 'subsystems'.
+A debugging tool and wrapper for [prettyjson-256](https://github.com/njhoffman/prettyjson-256) that decorates logging output to the console.
+Reads settings from a user-defined configuration file to control verbosity of different modules (called subsystems).
+This configuration file is watched for changes so the server does not have to be reloaded for filtering and formatting settings to be applied.
 
 ![Example Output](https://raw.github.com/njhoffman/debugger-256/master/docs/debug1.jpg)
 
@@ -13,9 +14,8 @@ $ npm install --save-dev debugger-256
 
 ## Usage
 
-This module returns a function that is passed an optional subsystem name similar to the debug module.
+This module returns a function that is passed an optional subsystem name similar to the [debug](https://github.com/visionmedia/debug) module.
 It returns 7 logging functions of different levels:
-
 
   Name | Level
   --- | ---
@@ -28,6 +28,7 @@ It returns 7 logging functions of different levels:
   trace | 6
 
 Each will output as different color, and optionally be filtered by a configuration file.
+The basic idea is to differentiate your logging messages into these different levels, which when combined with filtering allows one to quickly see very detailed output for some subystems without being cluttered by messages from other subsystems.
 
 ```javascript
 var createDebug = require('debugger-256')('app');
@@ -51,15 +52,15 @@ THe customColors property can be assigned tags with colors during initialization
 
 ```javascript
 var createDebug = require('debugger-256')('app');
-createDebug.init({ 
-  customColors: { 
+createDebug.init({
+  customColors: {
     resCode: { fg: [3,3,1] },
-    resTime: { fg: [1,2,3] } 
+    resTime: { fg: [1,2,3] }
    }
 });
-// wrap each string section to be colorized in parenthesis, 
+// wrap each string section to be colorized in parenthesis,
 // followed by a list of the customColor tags assigned to the key 'color'
-createDebug.log("The response code returned was %200 - Received% in %50ms%", 
+createDebug.log("The response code returned was %200 - Received% in %50ms%",
   { color: 'resCode' }, { color: 'resTime' });
 ```
 ![Example Output 64](https://raw.github.com/njhoffman/debugger-256/master/docs/debug6.jpg)
@@ -71,7 +72,7 @@ Based on the [debug](https://github.com/visionmedia/debug) package modular appro
 
 ## Options
 
-All options of [prettyjson-256](https://github.com/njhoffman/prettyjson-256) can be passed to the 'init' function, or they can be added to the configuration file described in the next section.  
+All options of [prettyjson-256](https://github.com/njhoffman/prettyjson-256) can be passed to the 'init' function, or they can be added to the configuration file described in the next section.
 
 ```javascript
 var createDebug = require('debugger-256')('app');
@@ -103,7 +104,7 @@ A configuration file named '.debugger-256' can be put in the root directory of t
    }
  }
 ```
-This specifies that messages from 'app:response' and 'app:request' level 6 and lower (all messages) wouldbe output, the '\*':3 specifies that app subsystems that aren't specified should only ouput messages from level and lower (only fatal, error, and warn).  
+This specifies that messages from 'app:response' and 'app:request' level 6 and lower (all messages) wouldbe output, the '\*':3 specifies that app subsystems that aren't specified should only ouput messages from level and lower (only fatal, error, and warn).
 
 For example:
 ![Example Output 2](https://raw.github.com/njhoffman/debugger-256/master/docs/debug2.jpg)

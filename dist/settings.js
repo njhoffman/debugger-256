@@ -14,7 +14,7 @@ var options = exports.options = {
   /* prettyjson-256 options */
   colors: {
     keys: { fg: [0, 2, 1] },
-    number: { grayscale: 11 }
+    number: { fg: { grayscale: 11 } }
   },
   customColors: {
     bold: { grayscale: 23 },
