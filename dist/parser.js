@@ -1,50 +1,56 @@
 'use strict';
 
-var _ = require('lodash');
+var _require = require('lodash'),
+    maxBy = _require.maxBy,
+    isObject = _require.isObject,
+    isUndefined = _require.isUndefined;
 
-var _require = require('./settings'),
-    options = _require.options,
-    subsystems = _require.subsystems;
+var _require2 = require('./settings'),
+    getOptions = _require2.getOptions,
+    getSubsystems = _require2.getSubsystems;
 
-module.exports = function (messages, subsystem, render) {
-  var subsystemsLength = _.maxBy(subsystems, function (ss) {
+var parseMessage = function parseMessage(messages, subsystem, render) {
+  var ssLength = maxBy(getSubsystems(), function (ss) {
     return ss.length;
   }).length + 1;
   var out = '';
 
-  var _loop = function _loop() {
-    var message = messages[i];
-    if (_.isObject(message)) {
-      out += '\n' + render(message, subsystemsLength + 7);
+  var _loop = function _loop(_i) {
+    var message = messages[_i];
+    if (isObject(message)) {
+      out += '\n' + render(message, ssLength + 7);
     } else {
-      var nextMsg = messages[i + 1];
+      var nextMsg = messages[_i + 1];
       if (/%.*%/.test(message) && nextMsg['color']) {
-        i++;
+        _i++;
         // check for special color directive
         message.match(/(%.*?%)/g).forEach(function (customMessage) {
           var renderObj = {};
           var colorTag = nextMsg && nextMsg['color'];
-          if (colorTag && _.isUndefined(options.customColors[colorTag])) {
+          if (colorTag && isUndefined(getOptions().customColors[colorTag])) {
             console.warn('\n -- Debugger Warning: Color Directive "' + colorTag + '" was not found in the settings. --\n');
           } else if (colorTag) {
             renderObj[colorTag] = customMessage.replace(/%/g, '');
             message = message.replace(customMessage, render(renderObj));
           }
-          nextMsg = messages[i + 1];
-          i++;
+          nextMsg = messages[_i + 1];
+          _i++;
         });
-        out += Array(subsystemsLength - subsystem.length).join(' ') + '   ' + message;
-      } else if (i === 0) {
-        out += Array(subsystemsLength - subsystem.length).join(' ') + '   ' + render(message);
+        out += Array(ssLength - subsystem.length).join(' ') + '   ' + message;
+      } else if (_i === 0) {
+        out += Array(ssLength - subsystem.length).join(' ') + '   ' + render(message);
       } else {
-        out += '\n' + Array(subsystemsLength + 7).join(' ') + render(message);
+        out += '\n' + Array(ssLength + 7).join(' ') + render(message);
       }
     }
+    i = _i;
   };
 
   for (var i = 0; i < messages.length; i++) {
-    _loop();
+    _loop(i);
   }
   return out;
 };
+
+module.exports = parseMessage;
 //# sourceMappingURL=parser.js.map

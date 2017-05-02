@@ -11,13 +11,16 @@ var _require = require('lodash'),
     keys = _require.keys,
     each = _require.each;
 
+var _require2 = require('./console'),
+    log = _require2.log;
+
 var parseMessages = require('./parser');
 
-var _require2 = require('./settings'),
-    options = _require2.options,
-    subsystems = _require2.subsystems,
-    conf = _require2.conf,
-    initSettings = _require2.initSettings;
+var _require3 = require('./settings'),
+    options = _require3.options,
+    subsystems = _require3.subsystems,
+    conf = _require3.conf,
+    initSettings = _require3.initSettings;
 
 var render = pjson.init(options);
 
@@ -54,12 +57,12 @@ var debug = function debug(level, subsystem) {
   }
   var subObj = level === 0 ? { fatal: subsystem } : level === 1 ? { error: subsystem } : level === 2 ? { warn: subsystem } : level === 4 ? { info: subsystem } : level === 5 ? { debug: subsystem } : level === 6 ? { trace: subsystem } : { log: subsystem };
 
-  console.log('  ' + render(subObj) + parseMessages(messages, subsystem, render));
+  log('  ' + render(subObj) + parseMessages(messages, subsystem, render));
 };
 
 var showColors = exports.showColors = function showColors() {
   each(keys(options.customColors), function (key) {
-    console.log(parseMessages(['%Custom Color: ' + key + '%', { color: key }], '', render));
+    log(parseMessages(['%Custom Color: ' + key + '%', { color: key }], '', render));
   });
 };
 
@@ -70,7 +73,7 @@ var init = exports.init = function init(customSettings) {
 var createDebug = exports.createDebug = function createDebug() {
   var subsystem = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
-  subsystems.push(subsystem);
+  subsystem && subsystem.length > 0 && subsystems.push(subsystem);
   return {
     fatal: debug.bind(undefined, 0, subsystem),
     error: debug.bind(undefined, 1, subsystem),

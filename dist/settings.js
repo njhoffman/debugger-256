@@ -38,6 +38,7 @@ var options = exports.options = {
     white: { fg: [0, 3, 0] },
     gray: { grayscale: 12 },
 
+    fatal: { fg: [5, 0, 0] },
     error: { fg: [4, 0, 0] },
     warn: { fg: [4, 2, 2] },
     log: { fg: [0, 2, 4] },
@@ -48,8 +49,14 @@ var options = exports.options = {
   /* debugger-256 options */
   colorTag: 'color'
 };
+var getOptions = function getOptions() {
+  return options;
+};
 
 var subsystems = exports.subsystems = [];
+var getSubsystems = exports.getSubsystems = function getSubsystems() {
+  return subsystems;
+};
 var conf = exports.conf = false;
 
 var loadConfFile = exports.loadConfFile = function loadConfFile() {
