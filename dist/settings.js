@@ -49,10 +49,10 @@ var options = exports.options = {
   /* debugger-256 options */
   colorTag: 'color'
 };
-var getOptions = function getOptions() {
+
+var getOptions = exports.getOptions = function getOptions() {
   return options;
 };
-
 var subsystems = exports.subsystems = [];
 var getSubsystems = exports.getSubsystems = function getSubsystems() {
   return subsystems;
