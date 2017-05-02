@@ -19,7 +19,7 @@ var parseMessages = require('./parser');
 var _require3 = require('./settings'),
     options = _require3.options,
     subsystems = _require3.subsystems,
-    conf = _require3.conf,
+    getConf = _require3.getConf,
     initSettings = _require3.initSettings;
 
 var render = pjson.init(options);
@@ -49,8 +49,8 @@ var debug = function debug(level, subsystem) {
   /* TODO: make this overwritten by DEBUG=* environment variable
     nested subsystems delineated by :'s (app:routes:admin)
     set as single number for log level, two numbers comma separated to indicate object logging depth */
-  if (conf) {
-    var confLevel = findLevel(subsystem.split(':'), conf, 1, 6);
+  if (getConf()) {
+    var confLevel = findLevel(subsystem.split(':'), getConf(), 1, 6);
     if (level > confLevel) {
       return;
     }

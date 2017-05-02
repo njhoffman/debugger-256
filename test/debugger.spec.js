@@ -12,7 +12,7 @@ describe('debugger module', () => {
       createDebug = proxyquire('../lib/debugger', {
         './settings': {
           subsystems,
-          conf
+          getConf: () => conf
         },
         './parser' : () => '',
         './console': { log: logStub }

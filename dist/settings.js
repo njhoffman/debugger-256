@@ -58,13 +58,27 @@ var getSubsystems = exports.getSubsystems = function getSubsystems() {
   return subsystems;
 };
 var conf = exports.conf = false;
+var getConf = exports.getConf = function getConf() {
+  return conf;
+};
+
+var fileChange = function fileChange(fileName) {
+  console.info('\n -- Detected file change in: ' + fileName + ', reinitializing debugger-256');
+  exports.conf = conf = loadConfFile();
+};
 
 var loadConfFile = exports.loadConfFile = function loadConfFile() {
-  // TODO: become a good programmer
-  if (fs.existsSync(path.resolve(__dirname, '.debugger-256'))) {
-    return JSON.parse(fs.readFileSync(path.resolve(__dirname, '.debugger-256')));
-  } else if (fs.existsSync(path.resolve(appRoot.toString(), '.debugger-256'))) {
-    return JSON.parse(fs.readFileSync(path.resolve(appRoot.toString(), '.debugger-256')));
+  // TODO: implement error handling
+  var currLocation = path.resolve(__dirname, '.debugger-256');
+  var rootLocation = path.resolve(appRoot.toString(), '.debugger-256');
+  if (fs.existsSync(currLocation)) {
+    !conf && console.info('\n -- Found debugger-256 configuration file: ' + currLocation + ', applying settings and watching for changes');
+    fs.watchFile(currLocation, { interval: 500 }, fileChange.bind(undefined, currLocation));
+    return JSON.parse(fs.readFileSync(currLocation));
+  } else if (fs.existsSync(rootLocation)) {
+    !conf && console.info('\n -- Found debugger-256 configuration file: ' + rootLocation + ', applying settings and watching for changes.');
+    fs.watchFile(rootLocation, { interval: 500 }, fileChange.bind(undefined, rootLocation));
+    return JSON.parse(fs.readFileSync(rootLocation));
   }
   return false;
 };
