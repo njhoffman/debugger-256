@@ -129,5 +129,5 @@ var initSettings = exports.initSettings = function initSettings(customOptions) {
   return options;
 };
 
-initSettings();
+exports.initSettings();
 //# sourceMappingURL=settings.js.map

@@ -2,13 +2,31 @@
 // const obj2 = require('./objects/2');
 // const obj3 = require('./objects/3');
 
-const showOutput = false;
+let showOutput = false;
 
 let options = {
   /* prettyjson-256 options */
-  colors:     {
-    keys:    { fg:  [0, 2, 1] },
-    number:  { grayscale: 11 }
+  alphabetizeKeys:    false,
+  defaultIndentation: 2,
+  depth:              -1,
+  emptyArrayMsg:      '(empty array)',
+  emptyObjectMsg:     '{}',
+  emptyStringMsg:     '""',
+  noColor:            false,
+  numberArrays:       false,
+  showEmpty:          true,
+  colors:             {
+    boolFalse:        { fg: [5, 4, 4] },
+    boolTrue:         { fg: [4, 4, 5] },
+    dash:             { fg: [2, 5, 4] },
+    date:             { fg: [0, 5, 2] },
+    depth:            { fg: [9] },
+    empty:            { fg: [13] },
+    functionHeader:   { fg: [13] },
+    functionTag:      { fg: [4, 4, 5] },
+    keys:             { fg: [0, 2, 1] },
+    number:           { grayscale: 11 },
+    string:           null
   },
   customColors : {
     bold:                     { fg: [23] },
@@ -71,20 +89,16 @@ const checksum = (s) => {
 };
 
 describe('Integration tests', () => {
-
   let sandbox, logStub, warnStub;
 
-
   describe('General output', () => {
-
     let createDebug;
-    let subs = [];
     beforeEach(() => {
       sandbox = sinon.sandbox.create();
       logStub = sandbox.stub();
       warnStub = sandbox.stub();
       createDebug = proxyquireNoCache('../lib/debugger', {
-        './console' : { log: logStub, warn: warnStub },
+        './console' : { log: logStub, warn: warnStub }
       });
       createDebug().reset();
       createDebug().init(options);
@@ -114,34 +128,34 @@ describe('Integration tests', () => {
       expect(checksum(output)).to.equal(expected);
     });
 
-    it('Should output correct colors from initial options determined by log level', () => {
+    it('Should output correct colors from initial options determined by log level #1', () => {
       const ss = testSubs[1];
       const li = loremIpsum[3];
       const logs = logStub.args;
       createDebug(ss).fatal(li);
       showOutput && console.log(logs[0][0]);
-      expect(checksum(logs[0][0])).to.equal('124407d3');
+      expect(checksum(logs[0][0])).to.equal('12433a98');
       createDebug(ss).error(li);
       showOutput && console.log(logs[1][0]);
-      expect(checksum(logs[1][0])).to.equal('12440746');
+      expect(checksum(logs[1][0])).to.equal('12433a2f');
       createDebug(ss).warn(li);
       showOutput && console.log(logs[2][0]);
-      expect(checksum(logs[2][0])).to.equal('12440795');
+      expect(checksum(logs[2][0])).to.equal('12433a6a');
       createDebug(ss).info(li);
       showOutput && console.log(logs[3][0]);
-      expect(checksum(logs[3][0])).to.equal('1244072c');
+      expect(checksum(logs[3][0])).to.equal('12433a1d');
       createDebug(ss).log(li);
       showOutput && console.log(logs[4][0]);
-      expect(checksum(logs[4][0])).to.equal('1243d452');
+      expect(checksum(logs[4][0])).to.equal('12430803');
       createDebug(ss).debug(li);
       showOutput && console.log(logs[5][0]);
-      expect(checksum(logs[5][0])).to.equal('12440788');
+      expect(checksum(logs[5][0])).to.equal('12433a61');
       createDebug(ss).trace(li);
       showOutput && console.log(logs[6][0]);
-      expect(checksum(logs[6][0])).to.equal('12440757');
+      expect(checksum(logs[6][0])).to.equal('12433a3c');
     });
 
-    it('Should output correct colors with customOptions determined by log level', () => {
+    it('Should output correct colors with customOptions determined by log level #2', () => {
       const ss = testSubs[5];
       const li = loremIpsum[2];
       const logs = logStub.args;
@@ -157,25 +171,25 @@ describe('Integration tests', () => {
       });
       createDebug(ss).fatal(li);
       showOutput && console.log(logs[0][0]);
-      expect(checksum(logs[0][0])).to.equal('1246d325');
+      expect(checksum(logs[0][0])).to.equal('1245efb6');
       createDebug(ss).error(li);
       showOutput && console.log(logs[1][0]);
-      expect(checksum(logs[1][0])).to.equal('1246d396');
+      expect(checksum(logs[1][0])).to.equal('1245f007');
       createDebug(ss).warn(li);
       showOutput && console.log(logs[2][0]);
-      expect(checksum(logs[2][0])).to.equal('12470be6');
+      expect(checksum(logs[2][0])).to.equal('124627af');
       createDebug(ss).info(li);
       showOutput && console.log(logs[3][0]);
-      expect(checksum(logs[3][0])).to.equal('12470c4f');
+      expect(checksum(logs[3][0])).to.equal('124627fc');
       createDebug(ss).log(li);
       showOutput && console.log(logs[4][0]);
-      expect(checksum(logs[4][0])).to.equal('12470c2f');
+      expect(checksum(logs[4][0])).to.equal('124627e4');
       createDebug(ss).debug(li);
       showOutput && console.log(logs[5][0]);
-      expect(checksum(logs[5][0])).to.equal('12470c2e');
+      expect(checksum(logs[5][0])).to.equal('124627e3');
       createDebug(ss).trace(li);
       showOutput && console.log(logs[6][0]);
-      expect(checksum(logs[6][0])).to.equal('12470c11');
+      expect(checksum(logs[6][0])).to.equal('124627ce');
     });
 
     it('Should output inline string coloring when initialized correctly', () => {
@@ -183,7 +197,7 @@ describe('Integration tests', () => {
       dbg.init({ customColors: { testColor: { fg: [3, 0, 3] } } });
       dbg.log('Inline strings %can be colored% easily with the right initialization', { color: 'testColor' });
       showOutput && console.log(logStub.args[0][0]);
-      expect(checksum(logStub.args[0][0])).to.equal('123d105f');
+      expect(checksum(logStub.args[0][0])).to.equal('123bf681');
     });
 
     it('Should produce a warning if inline string color syntax used without definition', () => {
@@ -192,7 +206,7 @@ describe('Integration tests', () => {
 
   describe('Filtering', () => {
     let subs = [];
-    let createDebug, getConfStub;
+    let createDebug;
     let mockConf = {};
     beforeEach(() => {
       sandbox = sinon.sandbox.create();
@@ -226,6 +240,7 @@ describe('Integration tests', () => {
       createDebug('app').trace(li);
       expect(logStub).to.have.callCount(4);
     });
+
     it('Should not output messages with verbosity higher than parent wildcard (*) configuration level', () => {
       mockConf = { app: { '*' : 2 } };
       subs = ['app:config'];
@@ -244,12 +259,9 @@ describe('Integration tests', () => {
       expect(logStub).to.have.callCount(3);
     });
   });
-
 });
 
 const stripAnsi = (data) => {
   const ansiRE = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
   return data.replace(ansiRE, '');
 };
-
-
