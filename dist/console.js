@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = {
   log: function log() {
@@ -14,7 +14,9 @@ module.exports = {
     console.error.apply(console, Array.prototype.slice.call(arguments));
   },
   internalLog: function internalLog() {
-    console.log.apply(console, '\n -- ', Array.prototype.slice.call(arguments), '\n');
+    var out = Array.prototype.slice.call(arguments);
+    out[0] = "\n -- " + out[0] + "\n";
+    console.log.apply(console, out);
   }
 };
 //# sourceMappingURL=console.js.map
