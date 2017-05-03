@@ -31,8 +31,8 @@ Each will output as different color, and optionally be filtered by a configurati
 The basic idea is to differentiate your logging messages into these different levels, which when combined with filtering allows one to quickly see very detailed output for some subystems without being cluttered by messages from other subsystems.
 
 ```javascript
-var debugger = require('debugger-256')('app');
-debugger.log("hello world");
+var debug = require('debugger-256')('app');
+debug.log("hello world");
 
 //or
 var logWarn = require('debugger-256')('app').warn;
@@ -55,8 +55,8 @@ warn('all of these should appear under app:subsystem1');
 THe customColors property can be assigned tags with colors during initialization to colorize parts of single line strings.
 
 ```javascript
-var debugger = require('debugger-256')('app');
-debugger.init({
+var debug = require('debugger-256')('app');
+debug.init({
   customColors: {
     resCode: { fg: [3,3,1] },
     resTime: { fg: [1,2,3] }
@@ -64,7 +64,7 @@ debugger.init({
 });
 // wrap each string section to be colorized in parenthesis,
 // followed by a list of the customColor tags assigned to the key 'color'
-createDebug.log("The response code returned was %200 - Received% in %50ms%",
+debug.log("The response code returned was %200 - Received% in %50ms%",
   { color: 'resCode' }, { color: 'resTime' });
 ```
 ![Example Output 64](https://raw.github.com/njhoffman/debugger-256/master/docs/debug6.jpg)
@@ -79,7 +79,7 @@ Based on the [debug](https://github.com/visionmedia/debug) package modular appro
 All options of [prettyjson-256](https://github.com/njhoffman/prettyjson-256) can be passed to the 'init' function, or they can be added to the configuration file described in the next section.
 
 ```javascript
-var debugger = require('debugger-256')('app');
+var debug = require('debugger-256')('app');
 var initOptions = {
   depth: 3,
   alphabetizeKeys: true,
@@ -88,8 +88,8 @@ var initOptions = {
     boolTrue: { bg: [0,2,0] }
   }
 };
-debugger.init(initOptions);
-debugger.log(initOptions);
+debug.init(initOptions);
+debug.log(initOptions);
 ```
 
 ![Example Output 4](https://raw.github.com/njhoffman/debugger-256/master/docs/debug4.jpg)
