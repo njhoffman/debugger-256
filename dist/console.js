@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 module.exports = {
   log: function log() {
@@ -15,7 +15,7 @@ module.exports = {
   },
   internalLog: function internalLog() {
     var out = Array.prototype.slice.call(arguments);
-    out[0] = "\n -- " + out[0] + "\n";
+    out[0] = '\n -- ' + (out[0] ? out[0] : '') + '\n';
     console.log.apply(console, out);
   }
 };
