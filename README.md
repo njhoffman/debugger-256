@@ -1,6 +1,6 @@
 # debugger-256 [![Build Status](https://secure.travis-ci.org/njhoffman/debugger-256.png)](http://travis-ci.org/njhoffman/debugger-256) [![NPM version](https://badge.fury.io/js/debugger-256.png)](http://badge.fury.io/js/debugger-256)[![Coverage Status](https://coveralls.io/repos/github/njhoffman/debugger-256/badge.svg?branch=master)](https://coveralls.io/github/njhoffman/debugger-256?branch=master)
 
-A debugging tool and wrapper for [prettyjson-256](https://github.com/njhoffman/prettyjson-256) that decorates logging output to the console.
+A debugging tool utilizing [prettyjson-256](https://github.com/njhoffman/prettyjson-256) that decorates logging output to the console.
 Reads settings from a user-defined configuration file to control verbosity of different modules (called subsystems).
 This configuration file is watched for changes so the server does not have to be reloaded for filtering and formatting settings to be applied.
 
@@ -31,8 +31,12 @@ Each will output as different color, and optionally be filtered by a configurati
 The basic idea is to differentiate your logging messages into these different levels, which when combined with filtering allows one to quickly see very detailed output for some subystems without being cluttered by messages from other subsystems.
 
 ```javascript
-var createDebug = require('debugger-256')('app');
-createDebug.log("hello world");
+var debugger = require('debugger-256')('app');
+debugger.log("hello world");
+
+//or
+var logWarn = require('debugger-256')('app').warn;
+logWarn("hello world");
 
 // or
 var createDebug = require('debugger-256');
@@ -44,15 +48,15 @@ ES6 usage
 ```javascript
 const { info, warn } = require('debugger-256')('app:subsystem1');
 info('destructing assignmnet is cool');
-warn('all of these should appear under subsystem1');
+warn('all of these should appear under app:subsystem1');
 
 ```
 ### Inline string coloring
 THe customColors property can be assigned tags with colors during initialization to colorize parts of single line strings.
 
 ```javascript
-var createDebug = require('debugger-256')('app');
-createDebug.init({
+var debugger = require('debugger-256')('app');
+debugger.init({
   customColors: {
     resCode: { fg: [3,3,1] },
     resTime: { fg: [1,2,3] }
@@ -75,7 +79,7 @@ Based on the [debug](https://github.com/visionmedia/debug) package modular appro
 All options of [prettyjson-256](https://github.com/njhoffman/prettyjson-256) can be passed to the 'init' function, or they can be added to the configuration file described in the next section.
 
 ```javascript
-var createDebug = require('debugger-256')('app');
+var debugger = require('debugger-256')('app');
 var initOptions = {
   depth: 3,
   alphabetizeKeys: true,
@@ -84,8 +88,8 @@ var initOptions = {
     boolTrue: { bg: [0,2,0] }
   }
 };
-createDebug.init(initOptions);
-createDebug.log(initOptions);
+debugger.init(initOptions);
+debugger.log(initOptions);
 ```
 
 ![Example Output 4](https://raw.github.com/njhoffman/debugger-256/master/docs/debug4.jpg)
