@@ -10,9 +10,9 @@ var _require2 = require('./settings'),
     getSubsystems = _require2.getSubsystems;
 
 var parseMessage = function parseMessage(messages, subsystem, render) {
-  var ssLength = maxBy(getSubsystems(), function (ss) {
+  var ssLength = getSubsystems().length > 0 ? maxBy(getSubsystems(), function (ss) {
     return ss.length;
-  }).length + 1;
+  }).length + 1 : subsystem.length;
   var out = '';
 
   var _loop = function _loop(_i) {

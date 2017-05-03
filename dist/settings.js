@@ -8,12 +8,13 @@ var path = require('path');
 var appRoot = require('app-root-path');
 
 var _require = require('lodash'),
-    merge = _require.merge;
+    merge = _require.merge,
+    cloneDeep = _require.cloneDeep;
 
 var _require2 = require('./console'),
     internalLog = _require2.internalLog;
 
-var options = {
+var defaultOptions = {
   /* prettyjson-256 options */
   colors: {
     keys: { fg: [0, 2, 1] },
@@ -52,13 +53,19 @@ var options = {
   /* debugger-256 options */
   colorTag: 'color'
 };
+var options = cloneDeep(defaultOptions);
 var getOptions = exports.getOptions = function getOptions() {
   return options;
 };
 
-var subsystems = exports.subsystems = [];
+var subsystems = [];
 var getSubsystems = exports.getSubsystems = function getSubsystems() {
   return subsystems;
+};
+var addSubsystem = exports.addSubsystem = function addSubsystem(ss) {
+  if (ss && ss.length > 0 && subsystems.indexOf(ss) === -1) {
+    subsystems.push(ss);
+  }
 };
 
 var conf = false;
@@ -102,6 +109,12 @@ var loadConfFile = exports.loadConfFile = function loadConfFile() {
     return readConfFile(rootLocation);
   }
   return false;
+};
+
+var resetSettings = exports.resetSettings = function resetSettings() {
+  subsystems = [];
+  options = cloneDeep(defaultOptions);
+  return options;
 };
 
 var initSettings = exports.initSettings = function initSettings(customOptions) {

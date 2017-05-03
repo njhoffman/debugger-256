@@ -1,7 +1,9 @@
-const createDebug = require('../lib/debugger');
 // const obj1 = require('./objects/1');
 // const obj2 = require('./objects/2');
 // const obj3 = require('./objects/3');
+
+const showOutput = false;
+
 let options = {
   /* prettyjson-256 options */
   colors:     {
@@ -42,7 +44,7 @@ let options = {
   colorTag: 'color'
 };
 
-const subsystems = [
+const testSubs = [
   'app',
   'app:config',
   'app:config:services',
@@ -58,25 +60,130 @@ const loremIpsum = [
   'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
 ];
 
+const checksum = (s) => {
+  var chk = 0x12345678;
+  var len = s.length;
+  for (var i = 0; i < len; i++) {
+    chk += (s.charCodeAt(i) * (i + 1));
+  }
+  // returns 32-bit integer checksum encoded as a string containin it's hex value
+  return (chk & 0xffffffff).toString(16);
+};
+
 describe('Integration tests', () => {
-  subsystems.forEach(ss => {
-    createDebug(ss).init(options);
+
+  let sandbox, createDebug, logStub, warnStub;
+
+  let subs = [];
+  beforeEach(() => {
+    sandbox = sinon.sandbox.create();
+    logStub = sandbox.stub();
+    warnStub = sandbox.stub();
+    createDebug = proxyquireNoCache('../lib/debugger', {
+      './console' : { log: logStub, warn: warnStub },
+    });
+    createDebug().reset();
+    createDebug().init(options);
   });
-  subsystems.forEach(ss => {
-    // const li = loremIpsum[Math.ceil(Math.random() * 4) - 1];
-    // createDebug(ss).fatal(li);
-    // createDebug(ss).error(li);
-    // createDebug(ss).warn(li);
-    // createDebug(ss).info(li);
-    // createDebug(ss).log(li);
-    // createDebug(ss).debug(li);
-    // createDebug(ss).trace(li);
-    // createDebug(ss).log({ object1: 'object1' }, { object2: 'object2' }, { object3: 'object3' });
-    // createDebug(ss).log(obj3);
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  describe('General output', () => {
+
+    it('Should output correct indentation depending on initialized subsystems 1', () => {
+      const expected = '1245ddc8';
+      createDebug(testSubs[5]);
+      createDebug(testSubs[1]);
+      createDebug(testSubs[0]).log(loremIpsum[0]);
+      const output = stripAnsi(logStub.args[0][0]);
+      showOutput && console.log(output);
+      expect(checksum(output)).to.equal(expected);
+    });
+
+    it('Should output correct indentation depending on initialized subsystems 2', () => {
+      const expected = '12420f90';
+      createDebug(testSubs[3]);
+      createDebug(testSubs[1]);
+      createDebug(testSubs[0]).log(loremIpsum[0]);
+      const output = stripAnsi(logStub.args[0][0]);
+      showOutput && console.log(output);
+      expect(checksum(output)).to.equal(expected);
+    });
+
+    it('Should output correct colors from initial options determined by log level', () => {
+      const ss = testSubs[1];
+      const li = loremIpsum[3];
+      createDebug(ss).fatal(li);
+      showOutput && console.log(logStub.args[0][0]);
+      expect(checksum(logStub.args[0][0])).to.equal('124407d3');
+      createDebug(ss).error(li);
+      showOutput && console.log(logStub.args[1][0]);
+      expect(checksum(logStub.args[1][0])).to.equal('12440746');
+      createDebug(ss).warn(li);
+      showOutput && console.log(logStub.args[2][0]);
+      expect(checksum(logStub.args[2][0])).to.equal('12440795');
+      createDebug(ss).info(li);
+      showOutput && console.log(logStub.args[3][0]);
+      expect(checksum(logStub.args[3][0])).to.equal('1244072c');
+      createDebug(ss).log(li);
+      showOutput && console.log(logStub.args[4][0]);
+      expect(checksum(logStub.args[4][0])).to.equal('1243d452');
+      createDebug(ss).debug(li);
+      showOutput && console.log(logStub.args[5][0]);
+      expect(checksum(logStub.args[5][0])).to.equal('12440788');
+      createDebug(ss).trace(li);
+      showOutput && console.log(logStub.args[6][0]);
+      expect(checksum(logStub.args[6][0])).to.equal('12440757');
+    });
+
+    it('Should output correct colors with customOptions determined by log level', () => {
+      const ss = testSubs[5];
+      const li = loremIpsum[2];
+      createDebug().init({
+        customColors: {
+          fatal: { fg: [0, 0, 5] },
+          error: { fg: [2, 0, 4] },
+          warn:  { fg: [2, 2, 4] },
+          log:   { fg: [4, 2, 0] },
+          info:  { fg: [4, 2, 2] },
+          debug: { fg: [4, 3, 3] }
+        }
+      });
+      createDebug(ss).fatal(li);
+      showOutput && console.log(logStub.args[0][0]);
+      expect(checksum(logStub.args[0][0])).to.equal('1246d325');
+      createDebug(ss).error(li);
+      showOutput && console.log(logStub.args[1][0]);
+      expect(checksum(logStub.args[1][0])).to.equal('1246d396');
+      createDebug(ss).warn(li);
+      showOutput && console.log(logStub.args[2][0]);
+      expect(checksum(logStub.args[2][0])).to.equal('12470be6');
+      createDebug(ss).info(li);
+      showOutput && console.log(logStub.args[3][0]);
+      expect(checksum(logStub.args[3][0])).to.equal('12470c4f');
+      createDebug(ss).log(li);
+      showOutput && console.log(logStub.args[4][0]);
+      expect(checksum(logStub.args[4][0])).to.equal('12470c2f');
+      createDebug(ss).debug(li);
+      showOutput && console.log(logStub.args[5][0]);
+      expect(checksum(logStub.args[5][0])).to.equal('12470c2e');
+      createDebug(ss).trace(li);
+      showOutput && console.log(logStub.args[6][0]);
+      expect(checksum(logStub.args[6][0])).to.equal('12470c11');
+    });
+
+    it('Should output inline string coloring when initialized correctly', () => {
+    });
+
+    it('Should produce a warning if inline string color syntax used without definition', () => {
+    });
+  });
+  describe('Filtering', () => {
   });
 
 });
-
 
 const stripAnsi = (data) => {
   const ansiRE = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;

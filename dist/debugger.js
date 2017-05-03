@@ -18,8 +18,10 @@ var parseMessages = require('./parser');
 
 var _require3 = require('./settings'),
     getOptions = _require3.getOptions,
-    subsystems = _require3.subsystems,
+    getSubsystems = _require3.getSubsystems,
+    addSubsystem = _require3.addSubsystem,
     getConf = _require3.getConf,
+    resetSettings = _require3.resetSettings,
     initSettings = _require3.initSettings;
 
 var render = pjson.init(getOptions());
@@ -70,10 +72,14 @@ var init = exports.init = function init(customSettings) {
   pjson.init(initSettings(customSettings));
 };
 
+var reset = exports.reset = function reset() {
+  pjson.init(resetSettings());
+};
+
 var createDebug = exports.createDebug = function createDebug() {
   var subsystem = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
-  subsystem && subsystem.length > 0 && subsystems.push(subsystem);
+  addSubsystem(subsystem);
   return {
     fatal: debug.bind(undefined, 0, subsystem),
     error: debug.bind(undefined, 1, subsystem),
@@ -83,7 +89,8 @@ var createDebug = exports.createDebug = function createDebug() {
     debug: debug.bind(undefined, 5, subsystem),
     trace: debug.bind(undefined, 6, subsystem),
     showColors: showColors,
-    init: init
+    init: init,
+    reset: reset
   };
 };
 

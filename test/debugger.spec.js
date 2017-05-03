@@ -1,7 +1,7 @@
 describe('debugger module', () => {
   let sandbox;
   describe('createDebug', () => {
-    let createDebug, logStub;
+    let createDebug, logStub, addSubsystemStub;
     let subsystems = ['test_ss_1'];
     let conf = {
       'app' : 6
@@ -9,9 +9,10 @@ describe('debugger module', () => {
     beforeEach(() => {
       sandbox = sinon.sandbox.create();
       logStub = sandbox.stub();
+      addSubsystemStub = sandbox.stub();
       createDebug = proxyquire('../lib/debugger', {
         './settings': {
-          subsystems,
+          addSubsystem: addSubsystemStub,
           getConf: () => conf
         },
         './parser' : () => '',
@@ -25,12 +26,12 @@ describe('debugger module', () => {
 
     it('Should add argument to subsystems array', () => {
       createDebug('testing_subsystem');
-      expect(subsystems).to.deep.equal(['test_ss_1', 'testing_subsystem']);
+      expect(addSubsystemStub).to.have.been.called;
     });
 
-    it('Should return an object with 7 logging methods, init and showColors', () => {
+    it('Should return an object with 7 logging methods, init, reset and showColors', () => {
       const ret = createDebug();
-      ret.should.have.all.keys('fatal', 'error', 'warn', 'log', 'info', 'debug', 'trace', 'init', 'showColors');
+      ret.should.have.all.keys('fatal', 'error', 'warn', 'log', 'info', 'debug', 'trace', 'init', 'reset', 'showColors');
     });
 
     it('Should return nothing if loggging function invoked has level above configuration level', () => {
