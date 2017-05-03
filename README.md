@@ -4,7 +4,7 @@ A debugging tool and wrapper for [prettyjson-256](https://github.com/njhoffman/p
 Reads settings from a user-defined configuration file to control verbosity of different modules (called subsystems).
 This configuration file is watched for changes so the server does not have to be reloaded for filtering and formatting settings to be applied.
 
-![Example Output](https://raw.github.com/njhoffman/debugger-256/master/docs/debugger-256.gif)
+<img src="/debugger-256/docs/debugger-256.gif?raw=true" />
 
 ## Installation
 
