@@ -1,7 +1,9 @@
 describe('parser module', () => {
   let sandbox;
   describe('standard messages', () => {
-    let parser, renderStub, subsystems = [''], options = {};
+    let parser, renderStub;
+    let subsystems = [''];
+    let options = {};
     beforeEach(() => {
       sandbox = sinon.sandbox.create();
       renderStub = sandbox.stub().returns('');
@@ -37,8 +39,8 @@ describe('parser module', () => {
     });
 
     it('Should render single line message correct spacing with additional existing subystems', () => {
-      const ss = "currSubsystem";
-      subsystems = [ "testingSub1", "test2", "testingSubsystems3" ];
+      const ss = 'currSubsystem';
+      subsystems = [ 'testingSub1', 'test2', 'testingSubsystems3' ];
       const messages = [
         'message test 1'
       ];

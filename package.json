@@ -42,7 +42,7 @@
     "app-root-path": "^2.0.1",
     "babel-runtime": "^6.23.0",
     "lodash": "^4.17.4",
-    "prettyjson-256": "^1.2.1"
+    "prettyjson-256": "^1.2.6"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

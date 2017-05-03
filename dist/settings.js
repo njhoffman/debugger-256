@@ -10,7 +10,10 @@ var appRoot = require('app-root-path');
 var _require = require('lodash'),
     merge = _require.merge;
 
-var options = exports.options = {
+var _require2 = require('./console'),
+    internalLog = _require2.internalLog;
+
+var options = {
   /* prettyjson-256 options */
   colors: {
     keys: { fg: [0, 2, 1] },
@@ -49,36 +52,53 @@ var options = exports.options = {
   /* debugger-256 options */
   colorTag: 'color'
 };
-
 var getOptions = exports.getOptions = function getOptions() {
   return options;
 };
+
 var subsystems = exports.subsystems = [];
 var getSubsystems = exports.getSubsystems = function getSubsystems() {
   return subsystems;
 };
-var conf = exports.conf = false;
+
+var conf = false;
 var getConf = exports.getConf = function getConf() {
   return conf;
 };
 
 var fileChange = function fileChange(fileName) {
-  console.info('\n -- Detected file change in: ' + fileName + ', reinitializing debugger-256');
-  exports.conf = conf = loadConfFile();
+  internalLog('Detected file change in: ' + fileName + ', reinitializing debugger-256');
+  conf = loadConfFile();
+};
+
+var readConfFile = function readConfFile(loc) {
+  var content = fs.readFileSync(loc);
+  try {
+    conf = JSON.parse(content);
+    return conf;
+  } catch (e) {
+    internalLog('Error parsing configuration file', e);
+    return false;
+  }
+};
+
+var checkConfLocation = function checkConfLocation(loc) {
+  if (fs.existsSync(loc)) {
+    !conf && internalLog('Found debugger-256 configuration file: ' + loc + ', applying settings and watching for changes');
+    fs.watchFile(loc, { interval: 500 }, fileChange.bind(undefined, loc));
+    return true;
+  }
+  return false;
 };
 
 var loadConfFile = exports.loadConfFile = function loadConfFile() {
   // TODO: implement error handling
   var currLocation = path.resolve(__dirname, '.debugger-256');
   var rootLocation = path.resolve(appRoot.toString(), '.debugger-256');
-  if (fs.existsSync(currLocation)) {
-    !conf && console.info('\n -- Found debugger-256 configuration file: ' + currLocation + ', applying settings and watching for changes');
-    fs.watchFile(currLocation, { interval: 500 }, fileChange.bind(undefined, currLocation));
-    return JSON.parse(fs.readFileSync(currLocation));
-  } else if (fs.existsSync(rootLocation)) {
-    !conf && console.info('\n -- Found debugger-256 configuration file: ' + rootLocation + ', applying settings and watching for changes.');
-    fs.watchFile(rootLocation, { interval: 500 }, fileChange.bind(undefined, rootLocation));
-    return JSON.parse(fs.readFileSync(rootLocation));
+  if (checkConfLocation(currLocation)) {
+    return readConfFile(currLocation);
+  } else if (checkConfLocation(rootLocation)) {
+    return readConfFile(rootLocation);
   }
   return false;
 };
@@ -87,7 +107,7 @@ var initSettings = exports.initSettings = function initSettings(customOptions) {
   if (customOptions) {
     merge(options, customOptions);
   } else {
-    exports.conf = conf = loadConfFile();
+    conf = exports.loadConfFile();
     if (conf && conf['_debugger-256']) {
       merge(options, conf['_debugger-256']);
     }

@@ -17,12 +17,12 @@ var _require2 = require('./console'),
 var parseMessages = require('./parser');
 
 var _require3 = require('./settings'),
-    options = _require3.options,
+    getOptions = _require3.getOptions,
     subsystems = _require3.subsystems,
     getConf = _require3.getConf,
     initSettings = _require3.initSettings;
 
-var render = pjson.init(options);
+var render = pjson.init(getOptions());
 
 // TODO: on load check configuration file for errors
 
@@ -61,7 +61,7 @@ var debug = function debug(level, subsystem) {
 };
 
 var showColors = exports.showColors = function showColors() {
-  each(keys(options.customColors), function (key) {
+  each(keys(getOptions().customColors), function (key) {
     log(parseMessages(['%Custom Color: ' + key + '%', { color: key }], '', render));
   });
 };

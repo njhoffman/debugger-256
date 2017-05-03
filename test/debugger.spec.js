@@ -4,7 +4,7 @@ describe('debugger module', () => {
     let createDebug, logStub;
     let subsystems = ['test_ss_1'];
     let conf = {
-      "app" : 6
+      'app' : 6
     };
     beforeEach(() => {
       sandbox = sinon.sandbox.create();
@@ -26,7 +26,7 @@ describe('debugger module', () => {
     it('Should add argument to subsystems array', () => {
       createDebug('testing_subsystem');
       expect(subsystems).to.deep.equal(['test_ss_1', 'testing_subsystem']);
-    })
+    });
 
     it('Should return an object with 7 logging methods, init and showColors', () => {
       const ret = createDebug();
@@ -35,19 +35,19 @@ describe('debugger module', () => {
 
     it('Should return nothing if loggging function invoked has level above configuration level', () => {
       conf.app = 2;
-      createDebug('app').log("this should not be output");
-      createDebug('app').info("this should not be output");
-      createDebug('app').debug("this should not be output");
-      createDebug('app').trace("this should not be output");
+      createDebug('app').log('this should not be output');
+      createDebug('app').info('this should not be output');
+      createDebug('app').debug('this should not be output');
+      createDebug('app').trace('this should not be output');
       expect(logStub).to.not.have.been.called;
     });
 
     it('Should log to console if logging function invoked has level below configuration level', () => {
       conf.app = 4;
-      createDebug('app').log("this should be output");
-      createDebug('app').info("this should be output");
-      createDebug('app').debug("this should not be output");
-      createDebug('app').trace("this should not be output");
+      createDebug('app').log('this should be output');
+      createDebug('app').info('this should be output');
+      createDebug('app').debug('this should not be output');
+      createDebug('app').trace('this should not be output');
       expect(logStub).to.have.callCount(2);
     });
   });
@@ -57,7 +57,7 @@ describe('debugger module', () => {
 
     beforeEach(() => {
       sandbox = sinon.sandbox.create();
-      settingsInitStub = sandbox.stub().returns('settings initialized');;
+      settingsInitStub = sandbox.stub().returns('settings initialized');
       pjsonInitStub = sandbox.stub();
       init = proxyquire('../lib/debugger', {
         './settings': { initSettings: settingsInitStub },
@@ -69,13 +69,13 @@ describe('debugger module', () => {
     });
 
     it('Should initialize settings module with customSettings', () => {
-      init({ testSetting: "test_setting" })
+      init({ testSetting: 'test_setting' });
       expect(settingsInitStub).to.have.been.called.once;
       expect(settingsInitStub).to.have.been.calledWith({ testSetting: 'test_setting' });
     });
 
     it('Should initialize prettyjson-256 module with result from initializing settings', () => {
-      init({ testSetting: "test_setting" })
+      init({ testSetting: 'test_setting' });
       expect(pjsonInitStub).to.have.been.called.once;
       expect(pjsonInitStub).to.have.been.calledWith('settings initialized');
     });
