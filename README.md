@@ -4,12 +4,12 @@ A debugging tool and wrapper for [prettyjson-256](https://github.com/njhoffman/p
 Reads settings from a user-defined configuration file to control verbosity of different modules (called subsystems).
 This configuration file is watched for changes so the server does not have to be reloaded for filtering and formatting settings to be applied.
 
-![Example Output](https://raw.github.com/njhoffman/debugger-256/master/docs/debug1.jpg)
+![Example Output](https://raw.github.com/njhoffman/debugger-256/master/docs/debugger-256.gif)
 
 ## Installation
 
 ```bash
-$ npm install --save-dev debugger-256
+$ npm install --save debugger-256
 ```
 
 ## Usage
@@ -105,6 +105,24 @@ A configuration file named '.debugger-256' can be put in the root directory of t
  }
 ```
 This specifies that messages from 'app:response' and 'app:request' level 6 and lower (all messages) wouldbe output, the '\*':3 specifies that app subsystems that aren't specified should only ouput messages from level and lower (only fatal, error, and warn).
+
+You can also specify debugger-256 custom options (same as you would pass as an argument) by adding them to key '_debugger-256':
+
+*.debugger-256*
+```json
+ {
+   "app" : {
+     "*" : 2
+   },
+   "_debugger-256" : {
+      "depth" : 3,
+      "customColors" : {
+        "responseGet": { "fg": [1, 4, 3] },
+        "requestGet": { "fg": [1, 4, 3] },
+      }
+   }
+ }
+```
 
 For example:
 ![Example Output 2](https://raw.github.com/njhoffman/debugger-256/master/docs/debug2.jpg)
