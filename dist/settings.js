@@ -85,6 +85,7 @@ var readConfFile = function readConfFile(loc) {
 var checkConfLocation = function checkConfLocation(loc) {
   if (fs.existsSync(loc)) {
     !conf && internalLog('Found debugger-256 configuration file: ' + loc + ', applying settings and watching for changes');
+    fs.unwatchFile(loc);
     fs.watchFile(loc, { interval: 500 }, fileChange.bind(undefined, loc));
     return true;
   }
