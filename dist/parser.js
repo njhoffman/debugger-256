@@ -9,6 +9,10 @@ var _require2 = require('./settings'),
     getOptions = _require2.getOptions,
     getSubsystems = _require2.getSubsystems;
 
+var indent = function indent(num) {
+  return Array(num > 0 ? num : 1).join(' ');
+};
+
 var parseMessage = function parseMessage(messages, subsystem, render) {
   var ssLength = getSubsystems().length > 0 ? maxBy(getSubsystems(), function (ss) {
     return ss.length;
@@ -36,9 +40,9 @@ var parseMessage = function parseMessage(messages, subsystem, render) {
           nextMsg = messages[_i + 1];
           _i++;
         });
-        out += Array(ssLength - subsystem.length).join(' ') + '   ' + message;
+        out += indent(ssLength - subsystem.length) + '   ' + message;
       } else if (_i === 0) {
-        out += Array(ssLength - subsystem.length).join(' ') + '   ' + render(message);
+        out += indent(ssLength - subsystem.length) + '   ' + render(message);
       } else {
         out += '\n' + Array(ssLength + 7).join(' ') + render(message);
       }

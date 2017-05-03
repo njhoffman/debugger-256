@@ -9,7 +9,8 @@ var _require = require('lodash'),
     has = _require.has,
     get = _require.get,
     keys = _require.keys,
-    each = _require.each;
+    each = _require.each,
+    isObject = _require.isObject;
 
 var _require2 = require('./console'),
     log = _require2.log;
@@ -51,7 +52,7 @@ var debug = function debug(level, subsystem) {
   /* TODO: make this overwritten by DEBUG=* environment variable
     nested subsystems delineated by :'s (app:routes:admin)
     set as single number for log level, two numbers comma separated to indicate object logging depth */
-  if (getConf()) {
+  if (isObject(getConf())) {
     var confLevel = findLevel(subsystem.split(':'), getConf(), 1, 6);
     if (level > confLevel) {
       return;
