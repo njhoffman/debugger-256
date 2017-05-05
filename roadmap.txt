@@ -1,0 +1,6 @@
+Implement environment variable overrides for output similar to debug module (takes precedence over other configuration).
+Coniditional output for each message based on filtering level,  i.e. if displaying user accounts:
+  info('Users', _.map(users, 'email'), { filterMax: 5 })
+  trace('Users', users);
+  -- this would only output the info message if trace levels were not being logged
+Multiple colorKey and filterKey, should it be done?
