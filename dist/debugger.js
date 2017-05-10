@@ -58,6 +58,8 @@ var debug = function debug(level, subsystem) {
       return;
     }
   }
+  addSubsystem(subsystem);
+
   var subObj = level === 0 ? { fatal: subsystem } : level === 1 ? { error: subsystem } : level === 2 ? { warn: subsystem } : level === 4 ? { info: subsystem } : level === 5 ? { debug: subsystem } : level === 6 ? { trace: subsystem } : { log: subsystem };
 
   log('  ' + render(subObj) + parseMessages(messages, subsystem, render));
@@ -80,7 +82,6 @@ var reset = exports.reset = function reset() {
 var createDebug = exports.createDebug = function createDebug() {
   var subsystem = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
-  addSubsystem(subsystem);
   return {
     fatal: debug.bind(undefined, 0, subsystem),
     error: debug.bind(undefined, 1, subsystem),
