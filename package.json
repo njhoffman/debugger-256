@@ -14,7 +14,7 @@
     "test:watch": "mocha --watch --reporter spec",
     "coverage": "better-npm-run coverage",
     "coverage:watch": "npm run test:mochista -- --watch",
-    "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls"
+    "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls && rm -rf coverage"
   },
   "betterScripts": {
     "coverage": {
