@@ -2,7 +2,6 @@ describe('debugger module', () => {
   let sandbox;
   describe('createDebug', () => {
     let createDebug, logStub, addSubsystemStub;
-    let subsystems = ['test_ss_1'];
     let conf = {
       'app' : 6
     };
@@ -31,7 +30,8 @@ describe('debugger module', () => {
 
     it('Should return an object with 7 logging methods, init, reset and showColors', () => {
       const ret = createDebug();
-      ret.should.have.all.keys('fatal', 'error', 'warn', 'log', 'info', 'debug', 'trace', 'init', 'reset', 'showColors');
+      ret.should.have.all.keys('fatal', 'error', 'warn', 'log', 'info',
+        'debug', 'trace', 'init', 'reset', 'showColors');
     });
 
     it('Should return nothing if loggging function invoked has level above configuration level', () => {

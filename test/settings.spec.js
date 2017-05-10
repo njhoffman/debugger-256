@@ -62,7 +62,7 @@ describe('Settings', () => {
     });
 
     // loadConf is executed once with proxyquire import above
-    it('Should try to load the configuration file from the current directory, then the application root directory', () => {
+    it('Should try to load the config file from the current directory, then the app root directory', () => {
       //
       expect(existsSyncStub).to.have.callCount(2);
       expect(existsSyncStub.args[0][0].split('/').slice(-3).join('/')).to.equal(`debugger-256/lib/${confFileName}`);
@@ -101,8 +101,7 @@ describe('Settings', () => {
       existsSyncStub.returns(true);
       readFileSyncStub.returns(validJson);
       settings.loadConfFile();
-      expect(settings.getConf()).to.deep.equal({ key1: "val1" });
+      expect(settings.getConf()).to.deep.equal({ key1: 'val1' });
     });
-
   });
 });

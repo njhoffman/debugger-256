@@ -4,7 +4,6 @@
     "standard"
   ],
   "plugins": [
-    "babel",
     "promise"
   ],
   "env": {

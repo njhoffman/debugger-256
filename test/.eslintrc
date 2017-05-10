@@ -4,11 +4,12 @@
     "mocha" : true
   },
   "globals" : {
-    "expect"     : false,
-    "should"     : false,
-    "sinon"      : false,
-    "jest"       : false,
-    "proxyquire" : false
+    "expect"            : false,
+    "should"            : false,
+    "sinon"             : false,
+    "jest"              : false,
+    "proxyquire"        : false,
+    "proxyquireNoCache" : false
   },
   "rules" : {
     "no-unused-expressions" : "off"
