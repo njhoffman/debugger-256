@@ -110,20 +110,20 @@ describe('Integration tests', () => {
 
     it('Should output correct indentation depending on initialized subsystems 1', () => {
       const expected = '1245ddc8';
-      createDebug(testSubs[5]);
-      createDebug(testSubs[1]);
+      createDebug(testSubs[5]).log('');
+      createDebug(testSubs[1]).log('');
       createDebug(testSubs[0]).log(loremIpsum[0]);
-      const output = stripAnsi(logStub.args[0][0]);
+      const output = stripAnsi(logStub.args[2][0]);
       showOutput && console.log(output);
       expect(checksum(output)).to.equal(expected);
     });
 
     it('Should output correct indentation depending on initialized subsystems 2', () => {
       const expected = '12420f90';
-      createDebug(testSubs[3]);
-      createDebug(testSubs[1]);
+      createDebug(testSubs[3]).log('');
+      createDebug(testSubs[1]).log('');
       createDebug(testSubs[0]).log(loremIpsum[0]);
-      const output = stripAnsi(logStub.args[0][0]);
+      const output = stripAnsi(logStub.args[2][0]);
       showOutput && console.log(output);
       expect(checksum(output)).to.equal(expected);
     });

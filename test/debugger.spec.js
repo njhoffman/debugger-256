@@ -24,8 +24,8 @@ describe('debugger module', () => {
       sandbox.restore();
     });
 
-    it('Should add argument to subsystems array', () => {
-      createDebug('testing_subsystem');
+    it('Should add argument to subsystems array if message logged', () => {
+      createDebug('testing_subsystem').log('testing');
       expect(addSubsystemStub).to.have.been.called;
     });
 
