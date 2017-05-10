@@ -4,7 +4,6 @@
   "description": "A debugging utility based on 'debug' package that supports extended options and 256 colors",
   "main": "lib/debugger.js",
   "scripts": {
-    "clean": "rm -rf dist && mkdir dist",
     "lint": "esw lib test",
     "lint:fix": "npm run lint -- --fix",
     "lint:watch": "npm run lint -- --watch",
@@ -28,7 +27,7 @@
     "url": "git+https://github.com/njhoffman/debugger-256.git"
   },
   "author": "Nick Hoffman",
-  "license": "ISC",
+  "license": "MIT",
   "keywords": [
     "debug",
     "debugger",
