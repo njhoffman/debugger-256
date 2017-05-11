@@ -1,7 +1,7 @@
 describe('console output module', () => {
   // TODO: should output really be tested by stubbing console functions? risky, must ensure restored on error
 
-  let consoleMod = require('../lib/console');
+  let consoleMod = require('../../lib/console');
 
   it('Should provide a proxy to console.error', () => {
     expect(consoleMod).to.have.property('error');

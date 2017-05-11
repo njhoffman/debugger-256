@@ -1,1 +1,3 @@
+test/unit
+--recursive
 --require test/setup.js

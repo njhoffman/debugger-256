@@ -4,7 +4,7 @@ describe('Settings', () => {
   describe('Initialization', () => {
     beforeEach(() => {
       sandbox = sinon.sandbox.create();
-      settings = require('../lib/settings');
+      settings = require('../../lib/settings');
     });
 
     afterEach(() => {
