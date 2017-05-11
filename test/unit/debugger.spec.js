@@ -1,4 +1,4 @@
-describe('debugger module', () => {
+describe('Debugger', () => {
   let sandbox;
   describe('createDebug', () => {
     let createDebug, logStub, addSubsystemStub;

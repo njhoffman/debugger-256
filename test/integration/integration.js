@@ -116,10 +116,10 @@ const testOutput = (ret, expected, customOptions = {}, showOutput = false, saveS
 };
 
 
-describe('Integration tests', () => {
+describe('Integration', () => {
   let sandbox, logStub, warnStub;
 
-  describe('General output', () => {
+  describe('General Output', () => {
     let createDebug;
     beforeEach(() => {
       sandbox = sinon.sandbox.create();

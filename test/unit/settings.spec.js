@@ -30,7 +30,7 @@ describe('Settings', () => {
     });
   });
 
-  describe('Configuration file loading', () => {
+  describe('Configuration File', () => {
     // TODO: initSettings is invoked on load, is this best practice?
     //    -- ensures data is always initialized when imported
     //    -- muddies test results, could be switched off with environment variable

@@ -1,6 +1,6 @@
-describe('parser module', () => {
+describe('Parser', () => {
   let sandbox;
-  describe('standard messages', () => {
+  describe('Standard Messages', () => {
     let parser, renderStub;
     let subsystems = [''];
     let options = {};
@@ -58,7 +58,7 @@ describe('parser module', () => {
     //   expect(renderStub).to.have.been.called.thrice;
     // });
   });
-  describe('color directive messages', () => {
+  describe('Color Messages', () => {
 
   });
 });

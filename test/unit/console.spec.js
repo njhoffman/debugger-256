@@ -1,4 +1,4 @@
-describe('console output module', () => {
+describe('Console', () => {
   // TODO: should output really be tested by stubbing console functions? risky, must ensure restored on error
 
   let consoleMod = require('../../lib/console');
