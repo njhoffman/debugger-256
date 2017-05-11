@@ -1,6 +1,5 @@
-// const obj1 = require('./objects/1');
-// const obj2 = require('./objects/2');
-// const obj3 = require('./objects/3');
+const fs = require('fs');
+const path = require('path');
 
 let showOutput = false;
 
@@ -88,6 +87,35 @@ const checksum = (s) => {
   return (chk & 0xffffffff).toString(16);
 };
 
+const writeSnapshot = (name, data) => {
+  const fullPath = path.resolve(__dirname, `../snapshots/${name}`);
+  fs.writeFile(fullPath, data, (err) => {
+    if (err) {
+      return console.error(err);
+    }
+    console.log(`\n\n -- Snapshot "${fullPath}" Saved\n\n`);
+  });
+};
+
+const loadSnapshot = (name) => {
+  const fullPath = path.resolve(__dirname, `../snapshots/${name}`);
+  if (fs.existsSync(fullPath)) {
+    return fs.readFileSync(fullPath);
+  }
+  return false;
+};
+
+const testOutput = (ret, expected, customOptions = {}, showOutput = false, saveSnapshot = false) => {
+  const snapshot = loadSnapshot(expected);
+  const newOptions = Object.assign(Object.assign({}, options), customOptions);
+  const failOut = snapshot ? `\n(expected)\n${snapshot}\n(returned)\n${ret}\n` : `\n(returned)\n${ret}\n`;
+  showOutput && console.log(`\n${ret}\n`);
+  // expect(checksum(ret)).to.equal(expected);
+  expect(checksum(ret), failOut).to.equal(expected);
+  saveSnapshot && writeSnapshot(expected, ret);
+};
+
+
 describe('Integration tests', () => {
   let sandbox, logStub, warnStub;
 
@@ -132,27 +160,27 @@ describe('Integration tests', () => {
       const ss = testSubs[1];
       const li = loremIpsum[3];
       const logs = logStub.args;
+
       createDebug(ss).fatal(li);
-      showOutput && console.log(logs[0][0]);
-      expect(checksum(logs[0][0])).to.equal('12433a98');
+      testOutput(logs[0][0], '12433a98');
+
       createDebug(ss).error(li);
-      showOutput && console.log(logs[1][0]);
-      expect(checksum(logs[1][0])).to.equal('12433a2f');
+      testOutput(logs[1][0], '12433a2f');
+
       createDebug(ss).warn(li);
-      showOutput && console.log(logs[2][0]);
-      expect(checksum(logs[2][0])).to.equal('12433a6a');
-      createDebug(ss).info(li);
-      showOutput && console.log(logs[3][0]);
-      expect(checksum(logs[3][0])).to.equal('12433a1d');
+      testOutput(logs[2][0], '12433a6a');
+
       createDebug(ss).log(li);
-      showOutput && console.log(logs[4][0]);
-      expect(checksum(logs[4][0])).to.equal('12430803');
+      testOutput(logs[3][0], '12430803');
+
+      createDebug(ss).info(li);
+      testOutput(logs[4][0], '12433a1d');
+
       createDebug(ss).debug(li);
-      showOutput && console.log(logs[5][0]);
-      expect(checksum(logs[5][0])).to.equal('12433a61');
+      testOutput(logs[5][0], '12433a61');
+
       createDebug(ss).trace(li);
-      showOutput && console.log(logs[6][0]);
-      expect(checksum(logs[6][0])).to.equal('12433a3c');
+      testOutput(logs[6][0], '12433a3c');
     });
 
     it('Should output correct colors with customOptions determined by log level #2', () => {
@@ -169,35 +197,34 @@ describe('Integration tests', () => {
           debug: { fg: [4, 3, 3] }
         }
       });
+
       createDebug(ss).fatal(li);
-      showOutput && console.log(logs[0][0]);
-      expect(checksum(logs[0][0])).to.equal('1245efb6');
+      testOutput(logs[0][0], '1245efb6');
+
       createDebug(ss).error(li);
-      showOutput && console.log(logs[1][0]);
-      expect(checksum(logs[1][0])).to.equal('1245f007');
+      testOutput(logs[1][0], '1245f007');
+
       createDebug(ss).warn(li);
-      showOutput && console.log(logs[2][0]);
-      expect(checksum(logs[2][0])).to.equal('124627af');
-      createDebug(ss).info(li);
-      showOutput && console.log(logs[3][0]);
-      expect(checksum(logs[3][0])).to.equal('124627fc');
+      testOutput(logs[2][0], '124627af');
+
       createDebug(ss).log(li);
-      showOutput && console.log(logs[4][0]);
-      expect(checksum(logs[4][0])).to.equal('124627e4');
+      testOutput(logs[3][0], '124627e4');
+
+      createDebug(ss).info(li);
+      testOutput(logs[4][0], '124627fc');
+
       createDebug(ss).debug(li);
-      showOutput && console.log(logs[5][0]);
-      expect(checksum(logs[5][0])).to.equal('124627e3');
+      testOutput(logs[5][0], '124627e3');
+
       createDebug(ss).trace(li);
-      showOutput && console.log(logs[6][0]);
-      expect(checksum(logs[6][0])).to.equal('124627ce');
+      testOutput(logs[6][0], '124627ce');
     });
 
     it('Should output inline string coloring when initialized correctly', () => {
       const dbg = createDebug('test');
       dbg.init({ customColors: { testColor: { fg: [3, 0, 3] } } });
       dbg.log('Inline strings %can be colored% easily with the right initialization', { color: 'testColor' });
-      showOutput && console.log(logStub.args[0][0]);
-      expect(checksum(logStub.args[0][0])).to.equal('123bf681');
+      testOutput(logStub.args[0][0], '123bf681');
     });
 
     it('Should produce a warning if inline string color syntax used without definition', () => {
@@ -229,11 +256,8 @@ describe('Integration tests', () => {
       const li = loremIpsum[2];
       const logs = logStub.args;
       createDebug('app').fatal(li);
-      showOutput && console.log(logs[0][0]);
       createDebug('app').error(li);
-      showOutput && console.log(logs[1][0]);
       createDebug('app').warn(li);
-      showOutput && console.log(logs[2][0]);
       createDebug('app').info(li);
       createDebug('app').log(li);
       createDebug('app').debug(li);
@@ -247,11 +271,8 @@ describe('Integration tests', () => {
       const li = loremIpsum[0];
       const logs = logStub.args;
       createDebug('app:config').fatal(li);
-      showOutput && console.log(logs[0][0]);
       createDebug('app:config').error(li);
-      showOutput && console.log(logs[1][0]);
       createDebug('app:config').warn(li);
-      showOutput && console.log(logs[2][0]);
       createDebug('app:config').info(li);
       createDebug('app:config').log(li);
       createDebug('app:config').debug(li);
