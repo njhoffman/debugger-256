@@ -1,4 +1,6 @@
 # debugger-256 [![Build Status](https://secure.travis-ci.org/njhoffman/debugger-256.png)](http://travis-ci.org/njhoffman/debugger-256) [![NPM version](https://badge.fury.io/js/debugger-256.png)](http://badge.fury.io/js/debugger-256)[![Coverage Status](https://coveralls.io/repos/github/njhoffman/debugger-256/badge.svg?branch=master)](https://coveralls.io/github/njhoffman/debugger-256?branch=master)
+[![Dependency Status](https://david-dm.org/njhoffman/debugger-256.svg)](https://david-dm.org/njhoffman/debugger-256)
+[![devDependeny Status](https://david-dm.org/njhoffman/debugger-256/dev-status.svg)](https://david-dm.org/njhoffman/debugger-256#info=devDependencies)
 
 A debugging tool utilizing [prettyjson-256](https://github.com/njhoffman/prettyjson-256) that decorates logging output to the console.
 Reads settings from a user-defined configuration file to control verbosity of different modules (called subsystems).
