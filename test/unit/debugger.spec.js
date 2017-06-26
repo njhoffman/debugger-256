@@ -28,9 +28,9 @@ describe('Debugger', () => {
       expect(addSubsystemStub).to.have.been.called;
     });
 
-    it('Should return an object with 7 logging methods, init, reset and showColors', () => {
+    it('Should return an object with 8 logging methods, init, reset and showColors', () => {
       const ret = createDebug();
-      ret.should.have.all.keys('fatal', 'error', 'warn', 'log', 'info',
+      ret.should.have.all.keys('_dbg', 'fatal', 'error', 'warn', 'log', 'info',
         'debug', 'trace', 'init', 'reset', 'showColors');
     });
 
