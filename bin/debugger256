@@ -26,9 +26,9 @@ const renderLine = (line) => {
   const debugLine = createDebug(subsystem);
   const message = line.msg ? line.msg : line.message ? line.message : '';
 
-  // const deleteKeys = ['name', 'hostname', 'pid', 'subsystem', 'time', 'v', 'message', 'msg'];
-  // deleteKeys.forEach(dk => delete line[dk]);
-  debugLine[level](line);
+  const deleteKeys = ['name', 'hostname', 'pid', 'subsystem', 'time', 'v', 'message', 'msg'];
+  deleteKeys.forEach(dk => delete line[dk]);
+  debugLine[level](message, line);
 
   // const pjsonOptions = {
   //   #<{(| prettyjson-256 options |)}>#
