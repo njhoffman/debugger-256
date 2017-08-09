@@ -1,0 +1,104 @@
+#!/usr/bin/env node
+
+const prettyjson = require('prettyjson-256');
+const fs = require('fs');
+const argv = require('minimist')(process.argv.slice(2));
+
+let options = prettyjson._defaultOptions;
+let subsystems = [];
+
+const subsystems = [];
+const renderLine = (line) => {
+  try {
+    line = JSON.parse(line);
+  } catch(e) {
+    console.log(line);
+  }
+  const pjsonOptions = {
+    /* prettyjson-256 options */
+    colors:     {
+      keys:    { fg:  [0, 2, 1] },
+      number:  { fg: { grayscale: 11 } }
+    },
+    customColors : {
+      time:  { fg: [1, 3, 3] },
+      timeBrackets:  { fg: [16 ] },
+
+      fatal: { fg: [5, 0, 0] },
+      error: { fg: [4, 0, 0] },
+      warn:  { fg: [4, 1, 0] },
+      log:   { fg: [1, 2, 4] },
+      info:  { fg: [2, 3, 4] },
+      debug: { fg: [3, 3, 4] },
+      trace: { fg: [3, 4, 4] }
+    }
+  }
+  const render = prettyjson.init(pjsonOptions);
+	if (ss && ss.length > 0 && subsystems.indexOf(ss) === -1) {
+		subsystems.push(ss);
+	}
+
+
+  const subsystem = line.name + ' ' + line.subsystem;
+  const level = line.level;
+  const subObj = level === 60
+    ? { fatal: subsystem }
+    : level === 50
+    ? { error: subsystem }
+    : level === 40
+    ? { warn: subsystem }
+    : level === 30
+    ? { info: subsystem }
+    : level === 20
+    ? { debug: subsystem }
+    : level === 10
+    ? { trace: subsystem }
+    : { log: subsystem };
+
+  const fmtLine = `${line.msg}`;
+  const fmtTime = render({timeBrackets: '['}) + render({time: new Date(line.time).toLocaleTimeString()}) + render({timeBrackets: ']'});
+  line = _.omit(line, ['level', 'time', 'name', 'msg', 'v', 'subsystem', 'hostname', 'pid' ]);
+
+  // TODO: fix prettysjson-256 to not fart out when data is not JSON
+  if (! _.isEmpty(line)) {
+    console.log(render({ time: fmtTime }) + '  ' + render(subObj) +  '   ' + render(fmtLine) + '\n' + render(line, 3));
+  } else {
+    console.log(render({ time: fmtTime }) + '  ' + render(subObj) +  '   ' + render(fmtLine));
+  }
+};
+
+if (argv._.length) {
+  // First parameter is the file to read and parse
+  let filename = argv._[0];
+  try {
+    fs.readFileSync(filename, 'utf8').forEach(renderLine);
+  } catch (e) {
+    console.error('Error reading: ' + filename );
+    console.error(e);
+    console.error(e.stack);
+    process.exit(1);
+  }
+} else {
+  // Read input stream
+
+  let streamData = '';
+
+  process.stdin.resume();
+  process.stdin.setEncoding('utf8');
+  process.stdin.on('data', (chunk) => {
+    if (chunk === '\n') {
+      renderLine(streamData);
+      streamData = '';
+      return;
+    } else if (/\n$/.test(chunk)) {
+      streamData += chunk;
+      streamData.split('\n').forEach(renderLine);
+      streamData = '';
+      return;
+    }
+    streamData += chunk;
+  });
+  process.stdin.on('end', function(){
+    renderLine(streamData);
+  });
+}
