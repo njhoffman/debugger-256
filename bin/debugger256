@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const prettyjson = require('prettyjson-256');
+const createDebug = require('../lib/debugger');
 const _ = require('lodash');
 const fs = require('fs');
 const argv = require('minimist')(process.argv.slice(2));
@@ -17,57 +18,69 @@ const renderLine = (line) => {
     }
     return;
   }
-  const pjsonOptions = {
-    /* prettyjson-256 options */
-    colors:     {
-      keys:    { fg:  [0, 2, 1] },
-      number:  { fg: { grayscale: 11 } }
-    },
-    customColors : {
-      time:  { fg: [1, 3, 3] },
-      timeBrackets:  { fg: [16 ] },
+  //
+  let subsystem = line.name ? line.name : '';
+  subsystem += line.subsystem ? ' ' + line.subsystem : '';
 
-      fatal: { fg: [5, 0, 0] },
-      error: { fg: [4, 0, 0] },
-      warn:  { fg: [4, 1, 0] },
-      log:   { fg: [1, 2, 4] },
-      info:  { fg: [2, 3, 4] },
-      debug: { fg: [3, 3, 4] },
-      trace: { fg: [3, 4, 4] }
-    }
-  }
-  const render = prettyjson.init(pjsonOptions);
-	if (line.subsystem && line.subsystem.length > 0 && subsystems.indexOf(line.subsystem) === -1) {
-		subsystems.push(line.subsystem);
-	}
+  const level = line.level && /_dbg|fatal|error|warn|log|info|debug|trace/.test(line.level) ? line.level : 'info';
+  const debugLine = createDebug(subsystem);
+  const message = line.msg ? line.msg : line.message ? line.message : '';
 
+  // const deleteKeys = ['name', 'hostname', 'pid', 'subsystem', 'time', 'v', 'message', 'msg'];
+  // deleteKeys.forEach(dk => delete line[dk]);
+  debugLine[level](line);
 
-  const subsystem = line.name + ' ' + line.subsystem;
-  const level = line.level;
-  const subObj = level === 60
-    ? { fatal: subsystem }
-    : level === 50
-    ? { error: subsystem }
-    : level === 40
-    ? { warn: subsystem }
-    : level === 30
-    ? { info: subsystem }
-    : level === 20
-    ? { debug: subsystem }
-    : level === 10
-    ? { trace: subsystem }
-    : { log: subsystem };
-
-  const fmtLine = `${line.msg}`;
-  const fmtTime = render({timeBrackets: '['}) + render({time: new Date(line.time).toLocaleTimeString()}) + render({timeBrackets: ']'});
-  line = _.omit(line, ['level', 'time', 'name', 'msg', 'v', 'subsystem', 'hostname', 'pid' ]);
-
-  // TODO: fix prettysjson-256 to not fart out when data is not JSON
-  if (! _.isEmpty(line)) {
-    console.log(render({ time: fmtTime }) + '  ' + render(subObj) +  '   ' + render(fmtLine) + '\n' + render(line, 3));
-  } else {
-    console.log(render({ time: fmtTime }) + '  ' + render(subObj) +  '   ' + render(fmtLine));
-  }
+  // const pjsonOptions = {
+  //   #<{(| prettyjson-256 options |)}>#
+  //   colors:     {
+  //     keys:    { fg:  [0, 2, 1] },
+  //     number:  { fg: { grayscale: 11 } }
+  //   },
+  //   customColors : {
+  //     time:  { fg: [1, 3, 3] },
+  //     timeBrackets:  { fg: [16 ] },
+  //
+  //     fatal: { fg: [5, 0, 0] },
+  //     error: { fg: [4, 0, 0] },
+  //     warn:  { fg: [4, 1, 0] },
+  //     log:   { fg: [1, 2, 4] },
+  //     info:  { fg: [2, 3, 4] },
+  //     debug: { fg: [3, 3, 4] },
+  //     trace: { fg: [3, 4, 4] }
+  //   }
+  // }
+  // const render = prettyjson.init(pjsonOptions);
+	// if (line.subsystem && line.subsystem.length > 0 && subsystems.indexOf(line.subsystem) === -1) {
+	// 	subsystems.push(line.subsystem);
+	// }
+  //
+  //
+  // const subsystem = line.name + ' ' + line.subsystem;
+  // const level = line.level;
+  // const subObj = level === 60
+  //   ? { fatal: subsystem }
+  //   : level === 50
+  //   ? { error: subsystem }
+  //   : level === 40
+  //   ? { warn: subsystem }
+  //   : level === 30
+  //   ? { info: subsystem }
+  //   : level === 20
+  //   ? { debug: subsystem }
+  //   : level === 10
+  //   ? { trace: subsystem }
+  //   : { log: subsystem };
+  //
+  // const fmtLine = `${line.msg}`;
+  // const fmtTime = render({timeBrackets: '['}) + render({time: new Date(line.time).toLocaleTimeString()}) + render({timeBrackets: ']'});
+  // line = _.omit(line, ['level', 'time', 'name', 'msg', 'v', 'subsystem', 'hostname', 'pid' ]);
+  //
+  // // TODO: fix prettysjson-256 to not fart out when data is not JSON
+  // if (! _.isEmpty(line)) {
+  //   console.log(render({ time: fmtTime }) + '  ' + render(subObj) +  '   ' + render(fmtLine) + '\n' + render(line, 3));
+  // } else {
+  //   console.log(render({ time: fmtTime }) + '  ' + render(subObj) +  '   ' + render(fmtLine));
+  // }
 };
 
 if (argv._.length) {
