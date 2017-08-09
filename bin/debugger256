@@ -22,13 +22,28 @@ const renderLine = (line) => {
   let subsystem = line.name ? line.name : '';
   subsystem += line.subsystem ? ' ' + line.subsystem : '';
 
-  const level = line.level && /_dbg|fatal|error|warn|log|info|debug|trace/.test(line.level) ? line.level : 'info';
+  let level = 'info';
+  if (line.level && /(_dbg|fatal|error|warn|log|info|debug|trace)/.test(line.level)) {
+    level = line.level;
+  } else if (_.isNumber(line.level)) {
+    level = line.level === 60
+      ? 'fatal' : line.level === 50
+      ? 'error' : line.level === 40
+      ? 'warn' : line.level === 20
+      ? 'debug' : line.level === 10
+      ? 'trace' : 'info';
+  }
+
   const debugLine = createDebug(subsystem);
   const message = line.msg ? line.msg : line.message ? line.message : '';
 
-  const deleteKeys = ['name', 'hostname', 'pid', 'subsystem', 'time', 'v', 'message', 'msg'];
+  const deleteKeys = ['name', 'hostname', 'level', 'pid', 'subsystem', 'time', 'v', 'message', 'msg'];
   deleteKeys.forEach(dk => delete line[dk]);
-  debugLine[level](message, line);
+  if (_.isEmpty(line)) {
+    debugLine[level](message);
+  } else {
+    debugLine[level](message, line);
+  }
 
   // const pjsonOptions = {
   //   #<{(| prettyjson-256 options |)}>#
