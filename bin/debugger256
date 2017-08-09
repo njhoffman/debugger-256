@@ -1,18 +1,21 @@
 #!/usr/bin/env node
 
 const prettyjson = require('prettyjson-256');
+const _ = require('lodash');
 const fs = require('fs');
 const argv = require('minimist')(process.argv.slice(2));
 
 let options = prettyjson._defaultOptions;
 let subsystems = [];
 
-const subsystems = [];
 const renderLine = (line) => {
   try {
     line = JSON.parse(line);
   } catch(e) {
-    console.log(line);
+    if (line.trim().length > 0) {
+      console.log(line);
+    }
+    return;
   }
   const pjsonOptions = {
     /* prettyjson-256 options */
@@ -34,8 +37,8 @@ const renderLine = (line) => {
     }
   }
   const render = prettyjson.init(pjsonOptions);
-	if (ss && ss.length > 0 && subsystems.indexOf(ss) === -1) {
-		subsystems.push(ss);
+	if (line.subsystem && line.subsystem.length > 0 && subsystems.indexOf(line.subsystem) === -1) {
+		subsystems.push(line.subsystem);
 	}
 
 
