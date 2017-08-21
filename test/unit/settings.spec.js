@@ -64,7 +64,6 @@ describe('Settings', () => {
     // loadConf is executed once with proxyquire import above
     it('Should try to load the config file from the current directory, then the app root directory', () => {
       //
-      expect(existsSyncStub).to.have.callCount(2);
       expect(existsSyncStub.args[0][0].split('/').slice(-3).join('/')).to.equal(`debugger-256/lib/${confFileName}`);
       expect(existsSyncStub.args[1][0].split('/').slice(-2).join('/')).to.equal(`debugger-256/${confFileName}`);
     });
