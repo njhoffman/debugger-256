@@ -37,7 +37,7 @@ const renderLine = (line) => {
   const debugLine = createDebug(subsystem);
   const message = line.msg ? line.msg : line.message ? line.message : '';
 
-  const deleteKeys = ['name', 'hostname', 'level', 'pid', 'subsystem', 'time', 'v', 'message', 'msg'];
+  const deleteKeys = ['name', 'hostname', 'level', 'pid', 'subsystem', 'time', 'v', 'message', 'msg', '_logId'];
   deleteKeys.forEach(dk => delete line[dk]);
   if (_.isEmpty(line)) {
     debugLine[level](message);
