@@ -6,7 +6,6 @@ const _ = require('lodash');
 const fs = require('fs');
 const argv = require('minimist')(process.argv.slice(2));
 
-let options = prettyjson._defaultOptions;
 let subsystems = [];
 
 const renderLine = (line) => {
@@ -35,9 +34,13 @@ const renderLine = (line) => {
   }
 
   const debugLine = createDebug(subsystem);
-  const message = line.msg ? line.msg : line.message ? line.message : '';
+  const message = (line.msg ? line.msg : line.message ? line.message : '') +
+    line._requestId ? ` ${line._requestId}`;
 
-  const deleteKeys = ['name', 'hostname', 'level', 'pid', 'subsystem', 'time', 'v', 'message', 'msg', '_logId'];
+  const deleteKeys = [
+    'name', 'hostname', 'level', 'pid', 'subsystem', 'time',
+    'v', 'message', 'msg', '_logId', '_requestId', '_requestStart'
+  ];
   deleteKeys.forEach(dk => delete line[dk]);
   if (_.isEmpty(line)) {
     debugLine[level](message);
