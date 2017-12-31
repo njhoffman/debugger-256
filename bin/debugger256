@@ -35,7 +35,7 @@ const renderLine = (line) => {
 
   const debugLine = createDebug(subsystem);
   const message = (line.msg ? line.msg : line.message ? line.message : '') +
-    line._requestId ? ` ${line._requestId}`;
+    line._requestId ? pjson.render({ empty: ` ${line._requestId}` }) : '';
 
   const deleteKeys = [
     'name', 'hostname', 'level', 'pid', 'subsystem', 'time',
