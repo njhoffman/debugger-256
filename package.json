@@ -44,7 +44,7 @@
     "fs": "0.0.1-security",
     "lodash": "^4.17.4",
     "minimist": "^1.2.0",
-    "prettyjson-256": "^1.5.12"
+    "prettyjson-256": "^1.5.13"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
