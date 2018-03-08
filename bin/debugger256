@@ -27,19 +27,15 @@ const renderLine = (line) => {
     level = line.level === 60
       ? 'fatal' : line.level === 50
       ? 'error' : line.level === 40
-      ? 'warn' : line.level === 20
+      ? 'warn'  : line.level === 20
       ? 'debug' : line.level === 10
-      ? 'trace' : 'info';
+      ? 'trace' : line.level < 10
+      ? 'silly' : 'info';
   }
 
   const debugLine = createDebug(subsystem);
   const message = line.msg ? line.msg : line.message ? line.message : '';
 
-  const deleteKeys = [
-    'name', 'hostname', 'level', 'pid', 'subsystem', 'time',
-    'v', 'message', 'msg', '_logId', '_requestStart'
-  ];
-  deleteKeys.forEach(dk => delete line[dk]);
   if (_.isEmpty(line)) {
     debugLine[level](message);
   } else {
