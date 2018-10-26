@@ -1,10 +1,17 @@
 
 describe('Settings', () => {
   let settings, sandbox;
+  let readFileStub;
+
   describe('Initialization', () => {
     beforeEach(() => {
       sandbox = sinon.sandbox.create();
-      settings = require('../../lib/settings');
+      readFileStub = sandbox.stub().returns({ settings: {} });
+      settings = proxyquire('../lib/settings', {
+        './utils': {
+          readFile: readFileStub
+        }
+      });
     });
 
     afterEach(() => {
@@ -18,10 +25,9 @@ describe('Settings', () => {
     });
 
     it('Should override specific settings by merging options from a configuration file with existing options', () => {
-      const loadConfStub = sinon.stub(settings, 'loadConfFile')
-        .returns({ '_debugger-256' : { colorTag: 'test_val2' } });
+      readFileStub.returns({ settings : { colorTag: 'test_val2' } });
       settings.initSettings();
-      expect(loadConfStub).to.be.called.once;
+      expect(readFileStub).to.be.called.once;
       expect(settings.getOptions()).to.contain.key('colorTag');
       expect(settings.getOptions().colorTag).to.equal('test_val2');
     });
@@ -39,20 +45,22 @@ describe('Settings', () => {
     const confFileName = '.debugger-256';
     beforeEach(() => {
       sandbox = sinon.sandbox.create();
-      readFileSyncStub = sandbox.stub();
+      readFileStub = sandbox.stub();
       existsSyncStub = sandbox.stub().returns(false);
       watchFileStub = sandbox.stub();
       unwatchFileStub = sandbox.stub();
       internalLogStub = sandbox.stub();
       settings = proxyquire('../lib/settings', {
         'fs': {
-          readFileSync: readFileSyncStub,
           existsSync: existsSyncStub,
           watchFile: watchFileStub,
           unwatchFile: unwatchFileStub
         },
         './console' : {
-          internalLog: internalLogStub
+          internalLog: internalLogStub,
+        },
+        './utils': {
+          readFile: readFileStub
         }
       });
     });
@@ -61,46 +69,50 @@ describe('Settings', () => {
       sandbox.restore();
     });
 
-    // loadConf is executed once with proxyquire import above
-    it('Should try to load the config file from the current directory, then the app root directory', () => {
+    it('Should try to load the config file from the current directory, then recurse through parent directories', () => {
       //
       expect(existsSyncStub.args[0][0].split('/').slice(-3).join('/')).to.equal(`debugger-256/lib/${confFileName}`);
-      expect(existsSyncStub.args[1][0].split('/').slice(-2).join('/')).to.equal(`debugger-256/${confFileName}`);
+      expect(existsSyncStub.args[2][0].split('/').slice(-2).join('/')).to.equal(`debugger-256/${confFileName}`);
+    });
+
+    it('Should try to load files with or without the "js" extension', () => {
+      //
+      expect(existsSyncStub.args[1][0].split('/').slice(-3).join('/')).to.equal(`debugger-256/lib/${confFileName}.js`);
+      expect(existsSyncStub.args[3][0].split('/').slice(-2).join('/')).to.equal(`debugger-256/${confFileName}.js`);
     });
 
     it('Should output an internal message if file found and first time loading configuration', () => {
       existsSyncStub.returns(true);
-      readFileSyncStub.returns('{}');
       settings.loadConfFile();
       expect(internalLogStub).to.have.callCount(1);
     });
 
     it('Should unwatch previously watched file and watch new location', () => {
       existsSyncStub.returns(true);
-      readFileSyncStub.returns('{}');
       settings.loadConfFile();
       expect(unwatchFileStub).to.have.callCount(1);
     });
 
     it('Should attempt to load successfully found file as JSON', () => {
+      readFileStub.reset();
       existsSyncStub.returns(true);
       settings.loadConfFile();
-      expect(readFileSyncStub).have.callCount(1);
+      expect(readFileStub).have.callCount(1);
     });
 
     it('Should output an internal error message if file could not be parsed as JSON', () => {
       existsSyncStub.returns(true);
-      readFileSyncStub.returns('invalid json');
+      readFileStub.returns('invalid json');
       settings.loadConfFile();
       expect(unwatchFileStub).to.be.called.twice;
     });
 
     it('Should assign JSON to settings configuration if parsed correctly', () => {
-      const validJson = '{ "key1": "val1" }';
+      const validJson = { key1: "val1" };
       existsSyncStub.returns(true);
-      readFileSyncStub.returns(validJson);
+      readFileStub.returns(validJson);
       settings.loadConfFile();
-      expect(settings.getConf()).to.deep.equal({ key1: 'val1' });
+      expect(settings.getConf()).to.deep.equal(validJson);
     });
   });
 });

@@ -3,7 +3,9 @@ describe('Debugger', () => {
   describe('createDebug', () => {
     let createDebug, logStub, addSubsystemStub;
     let conf = {
-      'app' : 6
+      "subsystems" : {
+        'app' : 6
+      }
     };
     beforeEach(() => {
       sandbox = sinon.sandbox.create();
@@ -30,12 +32,14 @@ describe('Debugger', () => {
 
     it('Should return an object with 8 logging methods, init, reset and showColors', () => {
       const ret = createDebug();
-      ret.should.have.all.keys('_dbg', 'fatal', 'error', 'warn', 'log', 'info',
-        'debug', 'trace', 'init', 'reset', 'showColors');
+      ret.should.have.all.keys(
+        '_dbg', 'fatal', 'error', 'warn', 'log', 'info',
+        'debug', 'trace', 'init', 'reset', 'showColors'
+      );
     });
 
     it('Should return nothing if loggging function invoked has level above configuration level', () => {
-      conf.app = 2;
+      conf.subsystems.app = 2;
       createDebug('app').log('this should not be output');
       createDebug('app').info('this should not be output');
       createDebug('app').debug('this should not be output');
@@ -44,7 +48,7 @@ describe('Debugger', () => {
     });
 
     it('Should log to console if logging function invoked has level below configuration level', () => {
-      conf.app = 4;
+      conf.subsystems.app = 4;
       createDebug('app').log('this should be output');
       createDebug('app').info('this should be output');
       createDebug('app').debug('this should not be output');
@@ -82,40 +86,4 @@ describe('Debugger', () => {
     });
   });
 
-  describe('showColors', () => {
-    let parseStub, logStub, showColors;
-    const options = {
-      customColors: {
-        customColor1: 'colorVal1',
-        customColor2: 'colorVal2',
-        customColor3: 'colorVal3'
-      }
-    };
-    beforeEach(() => {
-      sandbox = sinon.sandbox.create();
-      parseStub = sandbox.stub();
-      logStub = sandbox.stub();
-      showColors = proxyquire('../lib/debugger', {
-        './settings': {
-          options
-        },
-        './parser' : parseStub,
-        './console': { log: logStub }
-      })().showColors;
-    });
-
-    afterEach(() => {
-      sandbox.restore();
-    });
-
-    it('Should call parseMessage for each customColor', () => {
-      showColors();
-      expect(parseStub).to.have.been.called.thrice;
-    });
-
-    it('Should output each customColor to console', () => {
-      showColors();
-      expect(logStub).to.have.been.called.thrice;
-    });
-  });
 });

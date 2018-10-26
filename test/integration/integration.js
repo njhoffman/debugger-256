@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-let showOutput = false;
+let showOutput = true;
 
 let options = {
   /* prettyjson-256 options */
@@ -105,7 +105,7 @@ const loadSnapshot = (name) => {
   return false;
 };
 
-const testOutput = (ret, expected, customOptions = {}, showOutput = false, saveSnapshot = false) => {
+const testOutput = (ret, expected, customOptions = {}, showOutput = false, saveSnapshot = true) => {
   const snapshot = loadSnapshot(expected);
   const newOptions = Object.assign(Object.assign({}, options), customOptions);
   const failOut = snapshot ? `\n(expected)\n${snapshot}\n(returned)\n${ret}\n` : `\n(returned)\n${ret}\n`;
@@ -156,68 +156,167 @@ describe('Integration', () => {
       expect(checksum(output)).to.equal(expected);
     });
 
-    it('Should output correct colors from initial options determined by log level #1', () => {
+    it('Should output correct colors from initial options determined by log level fatal', () => {
       const ss = testSubs[1];
       const li = loremIpsum[3];
       const logs = logStub.args;
 
       createDebug(ss).fatal(li);
-      testOutput(logs[0][0], '12433a98');
-
-      createDebug(ss).error(li);
-      testOutput(logs[1][0], '12433a2f');
-
-      createDebug(ss).warn(li);
-      testOutput(logs[2][0], '12433a6a');
-
-      createDebug(ss).log(li);
-      testOutput(logs[3][0], '12430803');
-
-      createDebug(ss).info(li);
-      testOutput(logs[4][0], '12433a1d');
-
-      createDebug(ss).debug(li);
-      testOutput(logs[5][0], '12433a61');
-
-      createDebug(ss).trace(li);
-      testOutput(logs[6][0], '12433a3c');
+      testOutput(logs[0][0], '12430d02');
     });
 
-    it('Should output correct colors with customOptions determined by log level #2', () => {
+    it('Should output correct colors from initial options determined by log level error', () => {
+      const ss = testSubs[1];
+      const li = loremIpsum[3];
+      const logs = logStub.args;
+
+      createDebug(ss).error(li);
+      testOutput(logs[0][0], '12430c99');
+    });
+
+    it('Should output correct colors from initial options determined by log level warn', () => {
+      const ss = testSubs[1];
+      const li = loremIpsum[3];
+      const logs = logStub.args;
+
+      createDebug(ss).warn(li);
+      testOutput(logs[0][0], '12430cd4');
+    });
+
+    it('Should output correct colors from initial options determined by log level log', () => {
+      const ss = testSubs[1];
+      const li = loremIpsum[3];
+      const logs = logStub.args;
+
+      createDebug(ss).log(li);
+      testOutput(logs[0][0], '1242da6d');
+    });
+
+    it('Should output correct colors from initial options determined by log level info', () => {
+      const ss = testSubs[1];
+      const li = loremIpsum[3];
+      const logs = logStub.args;
+
+      createDebug(ss).info(li);
+      testOutput(logs[0][0], '12430c87');
+    });
+
+    it('Should output correct colors from initial options determined by log level debug', () => {
+      const ss = testSubs[1];
+      const li = loremIpsum[3];
+      const logs = logStub.args;
+
+      createDebug(ss).debug(li);
+      testOutput(logs[0][0], '12430ccb');
+    });
+
+    it('Should output correct colors from initial options determined by log level trace', () => {
+      const ss = testSubs[1];
+      const li = loremIpsum[3];
+      const logs = logStub.args;
+
+      createDebug(ss).trace(li);
+      testOutput(logs[0][0], '12430ca6');
+    });
+
+    /* custom options */
+
+    it('Should output correct colors with customOptions determined by log level fatal', () => {
       const ss = testSubs[5];
       const li = loremIpsum[2];
       const logs = logStub.args;
       createDebug().init({
         customColors: {
-          fatal: { fg: [0, 0, 5] },
-          error: { fg: [2, 0, 4] },
-          warn:  { fg: [2, 2, 4] },
-          log:   { fg: [4, 2, 0] },
-          info:  { fg: [4, 2, 2] },
-          debug: { fg: [4, 3, 3] }
+          fatal: { fg: [0, 0, 5] }
         }
       });
 
       createDebug(ss).fatal(li);
-      testOutput(logs[0][0], '1245efb6');
+      testOutput(logs[0][0], '1245c477');
+    });
+
+    it('Should output correct colors with customOptions determined by log level error', () => {
+      const ss = testSubs[5];
+      const li = loremIpsum[2];
+      const logs = logStub.args;
+      createDebug().init({
+        customColors: {
+          error: { fg: [2, 0, 4] }
+        }
+      });
 
       createDebug(ss).error(li);
-      testOutput(logs[1][0], '1245f007');
+      testOutput(logs[0][0], '1245c4c8');
+    });
+
+    it('Should output correct colors with customOptions determined by log level warn', () => {
+      const ss = testSubs[5];
+      const li = loremIpsum[2];
+      const logs = logStub.args;
+      createDebug().init({
+        customColors: {
+          warn:  { fg: [2, 2, 4] }
+        }
+      });
 
       createDebug(ss).warn(li);
-      testOutput(logs[2][0], '124627af');
+      testOutput(logs[0][0], '1245fc70');
+    });
+
+    it('Should output correct colors with customOptions determined by log level log', () => {
+      const ss = testSubs[5];
+      const li = loremIpsum[2];
+      const logs = logStub.args;
+      createDebug().init({
+        customColors: {
+          log:   { fg: [4, 2, 0] }
+        }
+      });
 
       createDebug(ss).log(li);
-      testOutput(logs[3][0], '124627e4');
+      testOutput(logs[0][0], '1245fca5');
+    });
+
+    it('Should output correct colors with customOptions determined by log level info', () => {
+      const ss = testSubs[5];
+      const li = loremIpsum[2];
+      const logs = logStub.args;
+      createDebug().init({
+        customColors: {
+          info:  { fg: [4, 2, 2] }
+        }
+      });
 
       createDebug(ss).info(li);
-      testOutput(logs[4][0], '124627fc');
+      testOutput(logs[0][0], '1245fcbd');
+    });
+
+    it('Should output correct colors with customOptions determined by log level debug', () => {
+      const ss = testSubs[5];
+      const li = loremIpsum[2];
+      const logs = logStub.args;
+      createDebug().init({
+        customColors: {
+          debug: { fg: [4, 3, 3] }
+        }
+      });
 
       createDebug(ss).debug(li);
-      testOutput(logs[5][0], '124627e3');
+      testOutput(logs[0][0], '1245fca4');
+    });
+
+    it('Should output correct colors with customOptions determined by log level trace', () => {
+      const ss = testSubs[5];
+      const li = loremIpsum[2];
+      const logs = logStub.args;
+      createDebug().init({
+        customColors: {
+          trace: { fg: [4, 4, 3] }
+        }
+      });
 
       createDebug(ss).trace(li);
-      testOutput(logs[6][0], '124627ce');
+      testOutput(logs[0][0], '1245fcec');
     });
 
     it('Should output inline string coloring when initialized correctly', () => {
@@ -252,7 +351,7 @@ describe('Integration', () => {
     });
 
     it('Should not output messages with verbosity higher than subsystem configuration level', () => {
-      mockConf = { app: 3 };
+      mockConf = { subsystems: { app: 3 } };
       const li = loremIpsum[2];
       const logs = logStub.args;
       createDebug('app').fatal(li);
@@ -266,7 +365,7 @@ describe('Integration', () => {
     });
 
     it('Should not output messages with verbosity higher than parent wildcard (*) configuration level', () => {
-      mockConf = { app: { '*' : 2 } };
+      mockConf = { subsystems: {  app: { '*' : 2 } } };
       subs = ['app:config'];
       const li = loremIpsum[0];
       const logs = logStub.args;

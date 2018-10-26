@@ -7,9 +7,9 @@
     "lint": "esw lib test",
     "lint:fix": "npm run lint -- --fix",
     "lint:watch": "npm run lint -- --watch",
-    "test": "mocha",
-    "test:mochista": "mochista --reporter spec --opts ./test/mochista.opts",
-    "test:watch": "mocha --watch --reporter spec",
+    "test": "NODE_ENV=test mocha",
+    "test:mochista": "NODE_ENV=test mochista --reporter spec --opts ./test/mochista.opts",
+    "test:watch": "NODE_ENV=test mocha --watch --reporter spec",
     "coverage": "better-npm-run coverage",
     "coverage:watch": "npm run test:mochista -- --watch",
     "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls && rm -rf coverage"
