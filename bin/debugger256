@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+// opens a stream for piping output into
+// to preserve incoming ansi colors use 'unbuffer' in expect package
+
 const createDebug = require('../lib/debugger');
 const _ = require('lodash');
 const fs = require('fs');
@@ -24,6 +27,7 @@ const renderLine = (line) => {
   if (line.level && /(_dbg|fatal|error|warn|log|info|debug|trace)/.test(line.level)) {
     level = line.level;
   } else if (_.isNumber(line.level)) {
+    // bunyan log levels
     level = line.level === 60
       ? 'fatal' : line.level === 50
       ? 'error' : line.level === 40

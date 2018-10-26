@@ -105,7 +105,7 @@ const loadSnapshot = (name) => {
   return false;
 };
 
-const testOutput = (ret, expected, customOptions = {}, showOutput = false, saveSnapshot = true) => {
+const testOutput = (ret, expected, customOptions = {}, showOutput = false, saveSnapshot = false) => {
   const snapshot = loadSnapshot(expected);
   const newOptions = Object.assign(Object.assign({}, options), customOptions);
   const failOut = snapshot ? `\n(expected)\n${snapshot}\n(returned)\n${ret}\n` : `\n(returned)\n${ret}\n`;
