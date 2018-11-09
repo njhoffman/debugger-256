@@ -8,7 +8,7 @@ describe('Debugger', () => {
       }
     };
     beforeEach(() => {
-      sandbox = sinon.sandbox.create();
+      sandbox = sinon.createSandbox();
       logStub = sandbox.stub();
       addSubsystemStub = sandbox.stub();
       createDebug = proxyquire('../lib/debugger', {
@@ -61,7 +61,7 @@ describe('Debugger', () => {
     let settingsInitStub, pjsonInitStub, init;
 
     beforeEach(() => {
-      sandbox = sinon.sandbox.create();
+      sandbox = sinon.createSandbox();
       settingsInitStub = sandbox.stub().returns('settings initialized');
       pjsonInitStub = sandbox.stub();
       init = proxyquire('../lib/debugger', {
@@ -75,13 +75,13 @@ describe('Debugger', () => {
 
     it('Should initialize settings module with customSettings', () => {
       init({ testSetting: 'test_setting' });
-      expect(settingsInitStub).to.have.been.called.once;
+      expect(settingsInitStub).to.have.been.calledOnce;
       expect(settingsInitStub).to.have.been.calledWith({ testSetting: 'test_setting' });
     });
 
     it('Should initialize prettyjson-256 module with result from initializing settings', () => {
       init({ testSetting: 'test_setting' });
-      expect(pjsonInitStub).to.have.been.called.once;
+      expect(pjsonInitStub).to.have.been.calledOnce;
       expect(pjsonInitStub).to.have.been.calledWith('settings initialized');
     });
   });

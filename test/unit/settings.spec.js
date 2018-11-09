@@ -5,7 +5,7 @@ describe('Settings', () => {
 
   describe('Initialization', () => {
     beforeEach(() => {
-      sandbox = sinon.sandbox.create();
+      sandbox = sinon.createSandbox();
       readFileStub = sandbox.stub().returns({ settings: {} });
       settings = proxyquire('../lib/settings', {
         './utils': {
@@ -18,6 +18,10 @@ describe('Settings', () => {
       sandbox.restore();
     });
 
+    it('Should attempt to read file settings on load', () => {
+      expect(readFileStub).to.be.calledOnce;
+    });
+
     it('Should override specific settings by merging customOptions parameter with existing options', () => {
       settings.initSettings({ colorTag: 'test_val1' });
       expect(settings.getOptions()).to.contain.key('colorTag');
@@ -27,13 +31,12 @@ describe('Settings', () => {
     it('Should override specific settings by merging options from a configuration file with existing options', () => {
       readFileStub.returns({ settings : { colorTag: 'test_val2' } });
       settings.initSettings();
-      expect(readFileStub).to.be.called.once;
       expect(settings.getOptions()).to.contain.key('colorTag');
       expect(settings.getOptions().colorTag).to.equal('test_val2');
     });
 
-    it('Should initialize settings on load', () => {
-    });
+    // it('Should initialize settings on load', () => {
+    // });
   });
 
   describe('Configuration File', () => {
@@ -44,7 +47,7 @@ describe('Settings', () => {
     let readFileSyncStub, existsSyncStub, watchFileStub, unwatchFileStub, internalLogStub;
     const confFileName = '.debugger-256';
     beforeEach(() => {
-      sandbox = sinon.sandbox.create();
+      sandbox = sinon.createSandbox();
       readFileStub = sandbox.stub();
       existsSyncStub = sandbox.stub().returns(false);
       watchFileStub = sandbox.stub();
@@ -104,7 +107,7 @@ describe('Settings', () => {
       existsSyncStub.returns(true);
       readFileStub.returns('invalid json');
       settings.loadConfFile();
-      expect(unwatchFileStub).to.be.called.twice;
+      expect(unwatchFileStub).to.be.calledOnce;
     });
 
     it('Should assign JSON to settings configuration if parsed correctly', () => {

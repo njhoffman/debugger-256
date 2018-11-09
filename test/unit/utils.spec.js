@@ -11,7 +11,7 @@ describe('Utils', () => {
       }
     };
     beforeEach(() => {
-      sandbox = sinon.sandbox.create();
+      sandbox = sinon.createSandbox();
       pjsonRenderStub = sandbox.stub();
       logStub = sandbox.stub();
       showColors = proxyquire('../lib/utils', {
@@ -28,12 +28,12 @@ describe('Utils', () => {
 
     it('Should call render from prettyjson-256 for each customColor', () => {
       showColors(options);
-      expect(pjsonRenderStub).to.have.been.called.thrice;
+      expect(pjsonRenderStub).to.have.been.calledThrice;
     });
 
-    it('Should output each customColor to console', () => {
+    it('Should output each customColor to console and a blank line at the end', () => {
       showColors(options);
-      expect(logStub).to.have.been.called.thrice;
+      expect(logStub).to.have.callCount(4);
     });
   });
 });

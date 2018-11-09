@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-let showOutput = true;
+let showOutput = false;
 
 let options = {
   /* prettyjson-256 options */
@@ -122,7 +122,7 @@ describe('Integration', () => {
   describe('General Output', () => {
     let createDebug;
     beforeEach(() => {
-      sandbox = sinon.sandbox.create();
+      sandbox = sinon.createSandbox();
       logStub = sandbox.stub();
       warnStub = sandbox.stub();
       createDebug = proxyquireNoCache('../lib/debugger', {
@@ -335,7 +335,7 @@ describe('Integration', () => {
     let createDebug;
     let mockConf = {};
     beforeEach(() => {
-      sandbox = sinon.sandbox.create();
+      sandbox = sinon.createSandbox();
       logStub = sandbox.stub();
       warnStub = sandbox.stub();
       createDebug = proxyquireNoCache('../lib/debugger', {

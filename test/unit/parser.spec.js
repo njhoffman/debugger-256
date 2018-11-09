@@ -5,7 +5,7 @@ describe('Parser', () => {
     let subsystems = [''];
     let options = {};
     beforeEach(() => {
-      sandbox = sinon.sandbox.create();
+      sandbox = sinon.createSandbox();
       renderStub = sandbox.stub().returns('');
       parser = proxyquire('../lib/parser', {
         './settings': {
@@ -26,7 +26,7 @@ describe('Parser', () => {
         'message test 3'
       ];
       parser(messages, '', renderStub);
-      expect(renderStub).to.have.been.called.thrice;
+      expect(renderStub).to.have.been.calledThrice;
     });
 
     // TODO: make 3 spaces from key a customizeable option
