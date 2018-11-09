@@ -7,10 +7,16 @@ describe('Settings', () => {
     beforeEach(() => {
       sandbox = sinon.createSandbox();
       readFileStub = sandbox.stub().returns({ settings: {} });
+      existsSyncStub = sandbox.stub().returns(true);
+      statSyncStub = sandbox.stub().returns({ isFile: () => true });
       settings = proxyquire('../lib/settings', {
         './utils': {
           readFile: readFileStub
-        }
+        },
+        'fs': {
+          existsSync: existsSyncStub,
+          statSync: statSyncStub
+        },
       });
     });
 
@@ -50,6 +56,7 @@ describe('Settings', () => {
       sandbox = sinon.createSandbox();
       readFileStub = sandbox.stub();
       existsSyncStub = sandbox.stub().returns(false);
+      statSyncStub = sandbox.stub().returns({ isFile: () => true });
       watchFileStub = sandbox.stub();
       unwatchFileStub = sandbox.stub();
       internalLogStub = sandbox.stub();
@@ -57,7 +64,8 @@ describe('Settings', () => {
         'fs': {
           existsSync: existsSyncStub,
           watchFile: watchFileStub,
-          unwatchFile: unwatchFileStub
+          unwatchFile: unwatchFileStub,
+          statSync: statSyncStub
         },
         './console' : {
           internalLog: internalLogStub,
