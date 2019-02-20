@@ -12,7 +12,7 @@
     "test:watch": "NODE_ENV=test mocha --watch --reporter spec",
     "reports:coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls && rm -rf coverage",
     "reports:notes": "./node_modules/.bin/notes -x reports/tags/ -x core/ -g .gitignore || true",
-    "reports:depcheck": "node ./bin/reports/depcheck.js",
+    "reports:depcheck": "node ./.bin/reports/depcheck.js",
     "reports:gitstats": "./node_modules/.bin/git-stats --global-activity",
     "reports:gitstats:initialize": "./bin/git/init-gitstats",
     "reports:gitstats:authors": "./node_modules/.bin/git-stats --authors",

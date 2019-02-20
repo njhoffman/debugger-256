@@ -1,0 +1,26 @@
+{
+  "presets": [
+    ["@babel/preset-env"]
+  ],
+
+  "plugins": [
+    "@babel/plugin-transform-runtime",
+    "@babel/plugin-proposal-class-properties",
+    ["@babel/plugin-proposal-decorators", { "legacy": true }],
+    "add-module-exports",
+    ["module-resolver", {
+      "root": ["./"],
+      "alias": {
+        "lib": "./lib",
+        "test": "./test",
+        "underscore": "lodash"
+      }
+    }]
+  ],
+  "env": {
+    "development": {
+      "plugins": [
+      ]
+    }
+  }
+}
