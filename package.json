@@ -10,9 +10,16 @@
     "test": "NODE_ENV=test mocha",
     "test:mochista": "NODE_ENV=test mochista --reporter spec --opts ./test/mochista.opts",
     "test:watch": "NODE_ENV=test mocha --watch --reporter spec",
-    "coverage": "better-npm-run coverage",
-    "coverage:watch": "npm run test:mochista -- --watch",
-    "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls && rm -rf coverage"
+    "reports:coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls && rm -rf coverage",
+    "reports:notes": "./node_modules/.bin/notes -x reports/tags/ -x core/ -g .gitignore || true",
+    "reports:depcheck": "node ./bin/reports/depcheck.js",
+    "reports:gitstats": "./node_modules/.bin/git-stats --global-activity",
+    "reports:gitstats:initialize": "./bin/git/init-gitstats",
+    "reports:gitstats:authors": "./node_modules/.bin/git-stats --authors",
+    "reports:gitstats:report": "./node_modules/.bin/gitinspector -HTlrm -F text -x reports ./",
+    "reports:gitstats:report:html": "./node_modules/.bin/gitinspector -HTlrm -F html -x reports ./",
+    "test:coverage": "better-npm-run coverage",
+    "test:coverage:watch": "npm run test:mochista -- --watch"
   },
   "betterScripts": {
     "coverage": {
@@ -51,6 +58,7 @@
     "better-npm-run": "^0.1.1",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "code-notes": "^1.0.4",
     "coveralls": "^3.0.2",
     "eslint": "^5.2.1",
     "eslint-config-standard": "^12.0.0",
@@ -60,6 +68,10 @@
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
     "eslint-watch": "^4.0.2",
+    "git-stats": "^2.10.11",
+    "git-stats-importer": "^2.4.10",
+    "gitinspector": "^0.5.0-dev-2",
+    "husky": "^1.3.1",
     "istanbul": "^1.0.0-alpha.2",
     "mocha": "^5.2.0",
     "mochista": "^0.17.3",

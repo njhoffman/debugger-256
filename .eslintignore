@@ -1,6 +1,2 @@
-blueprints/**/files/**
 coverage/**
 node_modules/**
-dist/**
-test/scratchboard.js
-src/index.html
