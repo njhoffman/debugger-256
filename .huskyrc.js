@@ -14,7 +14,7 @@ if (fs.existsSync(hostFile)) {
 }
 // TODO: fork notes to prevent error exit status
 const baseHooks = {
-  'pre-commit': 'npm run lint',
+  // 'pre-commit': 'npm run lint',
   'commit-msg': 'commitlint -E HUSKY_GIT_PARAMS',
   'post-commit': tasks([
     'npm run reports:notes',
@@ -32,4 +32,3 @@ const baseHooks = {
 };
 
 module.exports = { hooks: { ...baseHooks, ...hostHooks } };
-
