@@ -24,7 +24,7 @@ const baseHooks = {
   'pre-push': './.bin/prePushVersion.sh',
   'post-push': tasks([
     'git push --no-verify',
-    'git push --tags --no-verify'
+    'git push --tags --no-verify',
     './.bin/postPushVersion.sh',
     'npm run reports:depcheck',
     'npm outdated'
