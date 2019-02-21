@@ -3,13 +3,13 @@
 // opens a stream for piping output into
 // to preserve incoming ansi colors use 'unbuffer' in expect package
 
-const createDebug = require('../lib/debugger');
-const _ = require('lodash');
 const fs = require('fs');
 const argv = require('minimist')(process.argv.slice(2));
+const { processLine } = require('../lib/debugger');
 
-let subsystems = [];
+/* eslint-disable no-nested-ternary, no-param-reassign, no-console  */
 
+const outputDelay = 0;
 let lastLineOut = false;
 const renderLine = (line) => {
   // detect if line JSON, if not just output in groups surrounded by two new lines
@@ -19,70 +19,44 @@ const renderLine = (line) => {
       console.log(lastLineOut, '\n\n');
       lastLineOut = false;
     }
-  } catch(e) {
+  } catch (e) {
     if (line.trim().length > 0) {
       if (lastLineOut) {
         console.log(lastLineOut);
         lastLineOut = line;
-      }  else {
-        // output lines if more than 1 second passed since new message
+      } else {
+        // output lines if more than outputdelay passed since new message
         setTimeout(() => {
           if (lastLineOut) {
             console.log(lastLineOut);
             lastLineOut = false;
           }
-        }, 1000);
+        }, outputDelay);
         lastLineOut = `\n\n${line}`;
       }
     }
     return;
   }
-
-  let subsystem = line.name ? line.name : '';
-  subsystem += line.subsystem ? ' ' + line.subsystem : '';
-
-  let level = 'info';
-  if (line.level && /(_dbg|fatal|error|warn|log|info|debug|trace)/.test(line.level)) {
-    level = line.level;
-  } else if (_.isNumber(line.level)) {
-    // bunyan log levels
-    level = line.level === 60
-      ? 'fatal' : line.level === 50
-      ? 'error' : line.level === 40
-      ? 'warn'  : line.level === 20
-      ? 'debug' : line.level === 10
-      ? 'trace' : line.level < 10
-      ? 'silly' : 'info';
-  }
-
-  const debugLine = createDebug(subsystem);
-  const message = line.msg ? line.msg : line.message ? line.message : '';
-
-  if (_.isEmpty(line)) {
-    debugLine[level](message);
-  } else {
-    debugLine[level](message, line);
-  }
+  processLine(line);
 };
 
 if (argv._.length) {
   // First parameter is the file to read and parse
-  let filename = argv._[0];
+  const filename = argv._[0];
   try {
     fs.readFileSync(filename, 'utf8').forEach(renderLine);
   } catch (e) {
-    console.error('Error reading: ' + filename );
+    console.error(`Error reading: ${filename}`);
     console.error(e);
     console.error(e.stack);
     process.exit(1);
   }
 } else {
   // Read input stream
-
-  let streamData = '';
-
   process.stdin.resume();
   process.stdin.setEncoding('utf8');
+
+  let streamData = '';
   process.stdin.on('data', (chunk) => {
     if (chunk === '\n') {
       renderLine(streamData);
@@ -96,7 +70,10 @@ if (argv._.length) {
     }
     streamData += chunk;
   });
-  process.stdin.on('end', function(){
+
+  process.stdin.on('end', () => {
     renderLine(streamData);
   });
 }
+
+/* eslint-enable no-nested-ternary, no-param-reassign, no-console */
