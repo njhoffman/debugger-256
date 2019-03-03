@@ -41,7 +41,6 @@ const generateLogs = (app, num = 100, itemRange = [3, 24]) => {
       msg: `#${n} ${_.times(_.random(5, 20), faker.lorem.words)}`,
       ...extra
     });
-    jkjk
     app.log('json', logItem);
   });
 };
