@@ -5,7 +5,7 @@
 
 const fs = require('fs');
 const argv = require('minimist')(process.argv.slice(2));
-const { processLine } = require('../lib/debugger');
+const { outputLine } = require('../lib/main');
 
 /* eslint-disable no-nested-ternary, no-param-reassign, no-console  */
 
@@ -37,7 +37,7 @@ const renderLine = (line) => {
     }
     return;
   }
-  processLine(line);
+  outputLine(line);
 };
 
 if (argv._.length) {

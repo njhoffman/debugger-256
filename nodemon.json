@@ -1,11 +1,13 @@
 {
   "verbose" : true,
+  "signal": "SIGTERM",
   "ignore" : [
     ".git",
+    "*.log",
     "node_modules/**/node_modules"
   ],
   "watch" : [
-    "*.js"
+    "termui/*.js"
   ],
   "env" : {
     "NODE_ENV" : "development"

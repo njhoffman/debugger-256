@@ -1,6 +1,9 @@
+const _ = require('lodash');
 const blessed = require('blessed');
+const path = require('path');
+const appRootPath = require('app-root-path');
 
-// Create a screen object.
+// create a screen object.
 const screen = blessed.screen({
   smartCSR: true,
   autoPadding: true,
@@ -9,31 +12,33 @@ const screen = blessed.screen({
     blink: true,
     color: '#ff0066'
   },
-  log: './blessed.log',
+  log: path.join(`${appRootPath}`, 'blessed.log'),
   // dump: true,
   debug: true,
   fullUnicode: true
 });
 screen.title = 'Message Sender';
-
-process.on('uncaughtException', (err) => {
-  screen.log(`${err.name} ${err.message} ${err.stack}`);
-  console.error(err);
-  setTimeout(() => {
-    process.exit(1);
-  }, 80000);
-});
-
 screen.log('screen root node loaded');
 
-// Create a box perfectly centered horizontally and vertically.
+let renderN = 0;
+let lastRender = null;
+screen.on('render', (...args) => {
+  if (!lastRender) {
+    lastRender = new Date().getTime();
+  }
+  screen.log(`RENDER: ${renderN} ${new Date().getTime() - lastRender}`);
+  lastRender = new Date().getTime();
+  renderN += 1;
+});
+
+// create a box perfectly centered horizontally and vertically.
 const logBox = blessed.log({
   top: 0,
   left: 0,
   height: '100%-1',
   mouse: true,
   vi: true,
-  scrollOnInput: false,
+  scrollOnInput: true,
   scrollable: true,
   alwaysScroll: true,
   scrollbar: {
@@ -53,6 +58,7 @@ const logBox = blessed.log({
     fg: 'cyan'
   }
 });
+
 
 // textbox -> textarea -> input -> box
 const inputBar = blessed.textbox({
@@ -89,7 +95,10 @@ const table1 = blessed.table({
   top: 0,
   left: 0,
   // left: 'center',
-  data: null,
+  data: [
+    ['Animals', 'Foods'],
+    ['Elephant', 'Apple']
+  ],
   align: 'center',
   tags: true,
   height: 1,
@@ -117,13 +126,14 @@ screen.append(inputBar);
 screen.append(dataBox);
 dataBox.append(table1);
 
-screen.log('child components initialized');
-
-module.exports = {
+const ui = {
   screen,
   logBox,
   inputBar,
   dataBox,
-  table1,
-  stripTags: blessed.stripTags
+  table1
 };
+
+module.exports = (app, done) => (
+  done(null, _.merge(app, { ui }))
+);

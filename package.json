@@ -4,6 +4,7 @@
   "description": "A debugging utility based on 'debug' package that supports extended options and 256 colors",
   "main": "lib/debugger.js",
   "scripts": {
+    "dev": "./node_modules/.bin/nodemon -I termui/index.js",
     "start": "node termui/index.js",
     "lint": "esw lib test",
     "lint:fix": "npm run lint -- --fix",
@@ -42,6 +43,7 @@
   "dependencies": {
     "ansi-256-colors": "^1.1.0",
     "app-root-path": "^2.1.0",
+    "async": "^2.6.2",
     "blessed": "https://github.com/blessed-ng/blessed/tarball/master",
     "blessed-contrib": "^4.8.5",
     "faker": "^4.1.0",

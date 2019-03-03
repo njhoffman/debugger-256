@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const faker = require('faker');
 
-const generateLog = ({ name, subsystem, msg, level }, extra) => ({
+const generateLogItem = ({ name, subsystem, msg, level }, extra) => ({
   name,
   subsystem,
   msg,
@@ -17,12 +17,13 @@ const randomSelect = (collection) => (
   collection[_.random(0, collection.length - 1)]
 );
 
-const generateLogs = (app, num = 100, itemRange = [3, 24]) => {
+const seed = (app) => (numItems = 100, itemRange = [3, 24]) => {
   // const categories = [
   //   'address', 'commerce', 'company', 'database', 'date', 'finance', 'hacker',
   //   'helpers', 'internet', 'lorem', 'name', 'phone', 'random', 'system'
   // ];
 
+  app.log('seed', `generating ${numItems} seeds`);
   const names = _.times(_.random(3, 8), faker.hacker.noun);
   const subsystems = _.times(_.random(4, 20), faker.hacker.noun);
   const levels = [10, 20, 30, 40, 50, 60];
@@ -33,26 +34,59 @@ const generateLogs = (app, num = 100, itemRange = [3, 24]) => {
     faker[randomSelect(_.keys(faker.name))]
   );
 
-  _.times(100, (n) => {
-    const logItem = generateLog({
+  _.times(numItems, (n) => {
+    const logItem = generateLogItem({
       name: randomSelect(names),
       subsystem: randomSelect(subsystems),
       level: randomSelect(levels),
-      msg: `#${n} ${_.times(_.random(5, 20), faker.lorem.words)}`,
+      msg: `#${n} ${_.times(_.random(5, 20), faker.lorem.word).join(' ')}`,
       ...extra
     });
     app.log('json', logItem);
   });
 };
 
-const seed = (app, args) => {
-  const num = args[1];
-  app.log('seed', `=> ${app.clr.white('seeding')}`);
-  generateLogs(app, num);
+const restart = (app) => (args) => process.exit();
+
+const quit = (app) => (args) => process.exit();
+
+const clear = ({ ui }) => (args) => ui.logBox.clearBaseLine(20);
+
+const unknown = ({ debug }) => (cmd) => debug(`  --unknown command: ${cmd}`);
+
+const commands = (app) => ({
+  seed:    seed(app),
+  quit:    quit(app),
+  restart: restart(app),
+  clear:   clear(app),
+  unknown: unknown(app)
+});
+
+const parse = (cmds) => (text) => {
+  const [cmd, ...args] = text.split(' ');
+  if (cmd === 'rs' || cmd === 'restart') {
+    cmds.restart();
+  } else if (cmd === 'quit' || cmd === 'q') {
+    cmds.quit();
+  } else if (cmd === 'seed' || cmd === 's') {
+    cmds.seed(args);
+  } else if (cmd === 'clear' || cmd === 'clr') {
+    cmds.clear(args);
+  } else {
+    cmds.unknown(args);
+  }
 };
 
-const restart = () => process.exit();
+const initCommands = (app) => {
+  const cmds = commands(app);
+  return {
+    ...cmds,
+    parse: parse(cmds)
+  };
+};
 
-const clear = (app) => app.ui.logBox.clearBaseLine(20);
-
-module.exports = { seed, restart, clear };
+module.exports = (app, done) => (
+  done(null, _.merge(app, {
+    commands: initCommands(app)
+  }))
+);

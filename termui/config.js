@@ -1,7 +1,18 @@
 const colors = require('ansi-256-colors');
 
 const config = {
-  inputPrefix: '{#cc0033-fg}{bold}>>{/} '
+  inputPrefix: '{#cc0033-fg}{bold}>>{/} ',
+  log: {
+    file: '',
+    interval: 10,
+    maxEntries: 9999999
+  },
+  debugLog: {
+    verbosity: 2,
+    interval: 50,
+    showMessages: true,
+    showRenders: true
+  },
 };
 
 const clr = {
@@ -14,4 +25,10 @@ const clr = {
   white: (msg) => colors.fg.grayscale[23] + msg + colors.reset
 };
 
-module.exports = { clr, config };
+const messages = {
+  debug: [],
+  log: [],
+  history: []
+};
+
+module.exports = { clr, config, messages };
