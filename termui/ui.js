@@ -21,7 +21,7 @@ process.on('uncaughtException', (err) => {
   console.error(err);
   setTimeout(() => {
     process.exit(1);
-  }, 3000);
+  }, 80000);
 });
 
 screen.log('screen root node loaded');

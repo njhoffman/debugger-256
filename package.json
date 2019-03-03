@@ -4,30 +4,23 @@
   "description": "A debugging utility based on 'debug' package that supports extended options and 256 colors",
   "main": "lib/debugger.js",
   "scripts": {
+    "start": "node termui/index.js",
     "lint": "esw lib test",
     "lint:fix": "npm run lint -- --fix",
     "lint:watch": "npm run lint -- --watch",
     "test": "NODE_ENV=test mocha",
     "test:mochista": "NODE_ENV=test mochista --reporter spec --opts ./test/mochista.opts",
     "test:watch": "NODE_ENV=test mocha --watch --reporter spec",
-    "reports:coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls && rm -rf coverage",
+    "test:coverage": "NODE_ENV=test NODE_TEST_QUIET=1 nyc --reporter=text --reporter=text-summary mocha",
+    "test:coverage:watch": "npm run test:mochista -- --watch",
+    "reports:coveralls": "npm run test:coverage && cat ./reports/coverage/lcov.info | coveralls",
     "reports:notes": "./node_modules/.bin/notes -x node_modules/ -g .gitignore || true",
     "reports:depcheck": "node ./.bin/reports/depcheck.js",
     "reports:gitstats": "./node_modules/.bin/git-stats --global-activity",
     "reports:gitstats:initialize": "./bin/git/init-gitstats",
     "reports:gitstats:authors": "./node_modules/.bin/git-stats --authors",
     "reports:gitstats:report": "./node_modules/.bin/gitinspector -HTlrm -F text -x reports ./",
-    "reports:gitstats:report:html": "./node_modules/.bin/gitinspector -HTlrm -F html -x reports ./",
-    "test:coverage": "better-npm-run coverage",
-    "test:coverage:watch": "npm run test:mochista -- --watch"
-  },
-  "betterScripts": {
-    "coverage": {
-      "command": "./node_modules/.bin/istanbul cover --dir ./coverage --report text --report lcov node_modules/.bin/_mocha -- --opts ./test/mocha.opts --reporter spec",
-      "env": {
-        "NODE_ENV": "test"
-      }
-    }
+    "reports:gitstats:report:html": "./node_modules/.bin/gitinspector -HTlrm -F html -x reports ./"
   },
   "bin": {
     "debugger256": "./bin/debugger256"
@@ -49,6 +42,8 @@
   "dependencies": {
     "ansi-256-colors": "^1.1.0",
     "app-root-path": "^2.1.0",
+    "blessed": "https://github.com/blessed-ng/blessed/tarball/master",
+    "blessed-contrib": "^4.8.5",
     "faker": "^4.1.0",
     "fs": "0.0.2",
     "lodash": "^4.17.11",
@@ -82,6 +77,7 @@
     "mocha": "^5.2.0",
     "mochista": "^0.17.3",
     "nodemon": "^1.18.10",
+    "nyc": "^13.1.0",
     "proxyquire": "^2.1.0",
     "sinon": "^7.1.1",
     "sinon-chai": "^3.2.0"

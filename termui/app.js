@@ -1,6 +1,6 @@
 const app = require('./config');
 app.ui = require('./ui');
-app.util = require('./util');
+app.util = require('./utils');
 app.commands = require('./commands');
 
 app.log = (...msg) => {
