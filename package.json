@@ -46,6 +46,7 @@
     "async": "^2.6.2",
     "blessed": "https://github.com/blessed-ng/blessed/tarball/master",
     "blessed-contrib": "^4.8.5",
+    "chalk": "^2.4.2",
     "faker": "^4.1.0",
     "fs": "0.0.2",
     "lodash": "^4.17.11",

@@ -23,7 +23,15 @@ const seed = (app) => (numItems = 100, itemRange = [3, 24]) => {
   //   'helpers', 'internet', 'lorem', 'name', 'phone', 'random', 'system'
   // ];
 
+  const { messages } = app;
   app.log('seed', `generating ${numItems} seeds`);
+
+  _.merge(messages, {
+    startSeedTime:  new Date().getTime(),
+    startSeedN: `${messages.history.length}`,
+    endSeed:    null
+  });
+
   const names = _.times(_.random(3, 8), faker.hacker.noun);
   const subsystems = _.times(_.random(4, 20), faker.hacker.noun);
   const levels = [10, 20, 30, 40, 50, 60];

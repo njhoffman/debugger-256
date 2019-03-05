@@ -1,83 +1,71 @@
 const _ = require('lodash');
-const { inspect } = require('util');
 const { processLine } = require('../lib/main');
+const debugLog = require('./debugger');
 
-let debugTimer;
 let logTimer;
 
-const debugOut = (screen, messages) => {
-  const curr = messages.debug.length > 0 ? messages.debug.shift() : false;
-  if (curr) {
-    screen.log(curr);
-    messages.history.push(curr);
-  } else {
-    clearInterval(debugTimer);
-    debugTimer = 0;
-  }
-};
+const logOut = (ui, messages) => {
+  const {
+    logBox,
+    performanceBox,
+    headerBox
+  } = ui;
 
-// output to blessed log file for debugging
-const debug = ({ config, ui, messages }) => (type, msg) => {
-  const { debugLog }  = config;
-  if (type === 'json') {
-    if (debugLog.verbosity >= 2) {
-      messages.debug.push([
-        `${type}\n`,
-        inspect(msg, { colors: true })
-      ].join(' ')
-        .split('\n')
-        .join(''));
-    } else if (debugLog.verbosity === 1) {
-      messages.debug.push(`${type} (${Object.keys(msg).length} keys)`);
-    }
-  } else {
-    messages.debug.push([].concat(msg).join('\n\t'));
-  }
+  const curr = messages.log.length > 0
+    ? messages.log.shift() : false;
 
-  if (!debugTimer) {
-    debugTimer = setInterval(() => (
-      debugOut(ui.screen, messages)
-    ), debugLog.interval);
-  }
-};
-
-const logOut = (logBox, messages) => {
-  const curr = messages.log.length > 0 ? messages.log.shift() : false;
   if (curr) {
     logBox.pushLine(curr);
     messages.history.push(curr);
+    performanceBox.updateData(messages);
+    headerBox.updateData(messages);
   } else {
     clearInterval(logTimer);
     logTimer = 0;
+    _.merge(messages, { endSeed: new Date().getTime() });
   }
 };
 
 // output in ui window
-const logger = (app) => (type, msg) => {
-  // console.log("TYPE", type, msg);
+let timerN = 0;
+
+const logger = (app) => ({ type, level }, msg) => {
   const { config, clr, ui, messages } = app;
+  const { log: { maxEntries } } = config;
+  const { history, log, levels } = messages;
+
+  const logTimerTick = () => {
+    timerN += 1;
+    logOut(ui, messages);
+    if (history.length > maxEntries) {
+      history.splice(maxEntries - history.length);
+    }
+  };
+
+  levels[level] += 1;
+
   if (type === 'send') {
-    messages.log.push(` ${clr.orange('SEND')} ${clr.gray(msg.slice(0))}`);
+    log.push(` ${clr.orange('SEND')} ${clr.gray(msg.slice(0))}`);
   } else if (type === 'json') {
     const fmtLine = processLine(msg);
-    // console.log(JSON.stringify(fmtLine));
-    messages.log.push(fmtLine);
+    log.push(fmtLine);
     // target.pushLine(processLine(msg));
   } else {
-    messages.log.push(clr.gray(msg));
+    log.push(clr.gray(msg));
   }
 
-  if (!logTimer) {
-    logTimer = setInterval(() => (
-      logOut(ui.logBox, messages)
-    ), config.log.interval);
+  if (_.isEmpty(logTimer)) {
+    if (messages.startSeedTime && !messages.startSeedTimeOut) {
+      messages.startSeedTimeOut = new Date().getTime();
+    }
+    logTimer = setInterval(logTimerTick, config.log.interval);
   }
 };
 
 
-const log = (app) => (type, msg) => {
-  debug(app)(type, msg);
-  logger(app)(type, msg);
+const log = (app) => (type, message) => {
+  debugLog(app)({ type, level: message.level }, message);
+  logger(app)({ type, level: message.level }, message);
 
   app.ui.screen.render();
 };
@@ -92,7 +80,7 @@ const logException = ({ ui }) => (err) => {
 };
 
 const initLoggers = (app) => ({
-  debug: debug(app),
+  debug: debugLog(app),
   log:   log(app),
   logEx: logException(app)
 });

@@ -4,12 +4,19 @@ const config = {
   inputPrefix: '{#cc0033-fg}{bold}>>{/} ',
   log: {
     file: '',
-    interval: 10,
-    maxEntries: 9999999
+    interval: 0,
+    maxEntries: 2000,
+    scrollbar: true,
+    scrollEntries: 5000,
+    panelTotals: true,
+    panelDiag: true,
+    panelSettings: true,
+    panelFilters: true,
+    panelHelp: true
   },
-  debugLog: {
-    verbosity: 2,
-    interval: 50,
+  debug: {
+    verbosity: -1,
+    interval: 20,
     showMessages: true,
     showRenders: true
   },
@@ -28,7 +35,15 @@ const clr = {
 const messages = {
   debug: [],
   log: [],
-  history: []
+  history: [],
+  subsystems: {},
+  levels: {
+    10: 0, 20: 0, 30: 0, 40: 0, 50: 0, 60: 0
+  }
 };
+
+// config.debug.logger = (...msg) => {
+//   console.log(`DEBUG LOGGER ${typeof msg}`, msg);
+// };
 
 module.exports = { clr, config, messages };

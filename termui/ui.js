@@ -3,6 +3,13 @@ const blessed = require('blessed');
 const path = require('path');
 const appRootPath = require('app-root-path');
 
+const {
+  padLeft,
+  numCommas: nc,
+  humanMemorySize: hms,
+  memorySizeOf
+} = require('./utils');
+
 // create a screen object.
 const screen = blessed.screen({
   smartCSR: true,
@@ -23,10 +30,10 @@ screen.log('screen root node loaded');
 let renderN = 0;
 let lastRender = null;
 screen.on('render', (...args) => {
-  if (!lastRender) {
-    lastRender = new Date().getTime();
-  }
-  screen.log(`RENDER: ${renderN} ${new Date().getTime() - lastRender}`);
+  // if (!lastRender) {
+  //   lastRender = new Date().getTime();
+  // }
+  // screen.log(`RENDER: ${renderN} ${new Date().getTime() - lastRender}`);
   lastRender = new Date().getTime();
   renderN += 1;
 });
@@ -41,6 +48,8 @@ const logBox = blessed.log({
   scrollOnInput: true,
   scrollable: true,
   alwaysScroll: true,
+  // scrollback: 1000,
+  // scrollbar: false,
   scrollbar: {
     ch: ' ',
     track: {
@@ -77,7 +86,62 @@ const inputBar = blessed.textbox({
   }
 });
 
-const dataBox = blessed.box({
+const headerWrapper = blessed.box({
+  top: 'top',
+  left: 'center',
+  align: 'center',
+  width: 'shrink',
+  height: 'shrink',
+  border: {
+    type: 'line',
+    // fg: '#660033'
+    fg: 'cyan'
+  }
+});
+
+const headerBox = blessed.table({
+  top: 'top',
+  left: 'left',
+  align: 'center',
+  tags: true,
+  pad: 5,
+  width: 'shrink',
+  height: 'shrink',
+  border: 'bg', // line
+  noCellBorders: true,
+  data: [],
+  style: {
+    border: {
+      fg: 'red'
+    },
+    header: {
+      fg: 'cyan',
+      bold: true
+    },
+    cell: {
+      fg: 'blue',
+      bold: true
+    }
+  }
+});
+
+headerBox.updateData = ({ log = [], history = [], levels = {} }) => {
+  headerBox.setData([[
+    'Total',
+    'Queued',
+    'History',
+    'Errors'
+  ], [
+    `${nc(Math.max(log.length + history.length - 1, 0))}`,
+    `${nc(log.length)}`,
+    `${nc(Math.max(history.length - 1, 0))}`,
+    `${nc((levels[10] + levels[20]) || 0)}`
+  ]]);
+};
+
+headerBox.updateData({});
+
+const performanceWrapper = blessed.box({
   top: 0,
   right: 0,
   width: 'shrink',
@@ -91,20 +155,17 @@ const dataBox = blessed.box({
   }
 });
 
-const table1 = blessed.table({
+const performanceBox = blessed.table({
   top: 0,
   left: 0,
   // left: 'center',
-  data: [
-    ['Animals', 'Foods'],
-    ['Elephant', 'Apple']
-  ],
-  align: 'center',
+  // bold, cyan-fg
+  align: 'left',
   tags: true,
   height: 1,
   border: 'bg', // line
   width: 'shrink',
-  pad: 1,
+  pad: 2,
   noCellBorders: true,
   style: {
     border: {
@@ -121,17 +182,47 @@ const table1 = blessed.table({
   }
 });
 
+performanceBox.updateData = ({ history = [], startSeedTime, startSeedN }) => {
+  const {
+    heapUsed,
+    heapTotal,
+    rss
+  } = process.memoryUsage();
+
+  const duration = startSeedTime
+    ? `${((new Date().getTime() - startSeedTime) / 1000).toFixed(2)}`
+    : 0;
+
+  const speed = startSeedN && duration
+    ? `${((history.length - startSeedN) / duration).toFixed(2)} ln/s`
+    : 'n/a';
+
+  performanceBox.setData([
+    [padLeft('History Size', 16), `${memorySizeOf(history)}`],
+    [padLeft('Render Duration', 16), `${duration} s`],
+    [padLeft('Render Speed', 16), `${speed}`],
+    [padLeft('Heap Usage', 16), hms(heapUsed)],
+    [padLeft('Heap Total', 16), hms(heapTotal)],
+    [padLeft('RSS Total', 16), hms(rss)],
+  ]);
+};
+
+// performanceBox.setContent('');
+// performanceBox.updateData({});
+
 screen.append(logBox);
 screen.append(inputBar);
-screen.append(dataBox);
-dataBox.append(table1);
+screen.append(performanceWrapper);
+screen.append(headerWrapper);
+headerWrapper.append(headerBox);
+performanceWrapper.append(performanceBox);
 
 const ui = {
   screen,
   logBox,
   inputBar,
-  dataBox,
-  table1
+  headerBox,
+  performanceBox
 };
 
 module.exports = (app, done) => (
