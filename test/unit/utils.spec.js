@@ -2,13 +2,15 @@ describe('Utils', () => {
   let sandbox;
 
   describe('showColors', () => {
-    let parseStub, logStub, showColors;
+    let parseStub;
+    let logStub;
+    let showColors;
     const options = {
       customColors: {
         customColor1: 'colorVal1',
         customColor2: 'colorVal2',
-        customColor3: 'colorVal3'
-      }
+        customColor3: 'colorVal3',
+      },
     };
     beforeEach(() => {
       sandbox = sinon.createSandbox();
@@ -16,9 +18,9 @@ describe('Utils', () => {
       logStub = sandbox.stub();
       showColors = proxyquire('../lib/utils', {
         'prettyjson-256': {
-          init: () => pjsonRenderStub
+          init: () => pjsonRenderStub,
         },
-        './console': { log: logStub }
+        './console': { log: logStub },
       }).showColors;
     });
 

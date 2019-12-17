@@ -1,6 +1,6 @@
-
 describe('Settings', () => {
-  let settings, sandbox;
+  let settings;
+  let sandbox;
   let readFileStub;
 
   describe('Initialization', () => {
@@ -11,11 +11,11 @@ describe('Settings', () => {
       statSyncStub = sandbox.stub().returns({ isFile: () => true });
       settings = proxyquire('../lib/settings', {
         './utils': {
-          readFile: readFileStub
+          readFile: readFileStub,
         },
-        'fs': {
+        fs: {
           existsSync: existsSyncStub,
-          statSync: statSyncStub
+          statSync: statSyncStub,
         },
       });
     });
@@ -35,7 +35,7 @@ describe('Settings', () => {
     });
 
     it('Should override specific settings by merging options from a configuration file with existing options', () => {
-      readFileStub.returns({ settings : { colorTag: 'test_val2' } });
+      readFileStub.returns({ settings: { colorTag: 'test_val2' } });
       settings.initSettings();
       expect(settings.getOptions()).to.contain.key('colorTag');
       expect(settings.getOptions().colorTag).to.equal('test_val2');
@@ -50,7 +50,11 @@ describe('Settings', () => {
     //    -- ensures data is always initialized when imported
     //    -- muddies test results, could be switched off with environment variable
     //    -- should probably conditionally initialize if other settings aren't initialized to prevent too many fs calls
-    let readFileSyncStub, existsSyncStub, watchFileStub, unwatchFileStub, internalLogStub;
+    let readFileSyncStub;
+    let existsSyncStub;
+    let watchFileStub;
+    let unwatchFileStub;
+    let internalLogStub;
     const confFileName = '.debugger-256';
     beforeEach(() => {
       sandbox = sinon.createSandbox();
@@ -61,18 +65,18 @@ describe('Settings', () => {
       unwatchFileStub = sandbox.stub();
       internalLogStub = sandbox.stub();
       settings = proxyquire('../lib/settings', {
-        'fs': {
+        fs: {
           existsSync: existsSyncStub,
           watchFile: watchFileStub,
           unwatchFile: unwatchFileStub,
-          statSync: statSyncStub
+          statSync: statSyncStub,
         },
-        './console' : {
+        './console': {
           internalLog: internalLogStub,
         },
         './utils': {
-          readFile: readFileStub
-        }
+          readFile: readFileStub,
+        },
       });
     });
 
@@ -82,14 +86,34 @@ describe('Settings', () => {
 
     it('Should try to load the config file from the current directory, then recurse through parent directories', () => {
       //
-      expect(existsSyncStub.args[0][0].split('/').slice(-3).join('/')).to.equal(`debugger-256/lib/${confFileName}`);
-      expect(existsSyncStub.args[2][0].split('/').slice(-2).join('/')).to.equal(`debugger-256/${confFileName}`);
+      expect(
+        existsSyncStub.args[0][0]
+          .split('/')
+          .slice(-3)
+          .join('/'),
+      ).to.equal(`debugger-256/lib/${confFileName}`);
+      expect(
+        existsSyncStub.args[2][0]
+          .split('/')
+          .slice(-2)
+          .join('/'),
+      ).to.equal(`debugger-256/${confFileName}`);
     });
 
     it('Should try to load files with or without the "js" extension', () => {
       //
-      expect(existsSyncStub.args[1][0].split('/').slice(-3).join('/')).to.equal(`debugger-256/lib/${confFileName}.js`);
-      expect(existsSyncStub.args[3][0].split('/').slice(-2).join('/')).to.equal(`debugger-256/${confFileName}.js`);
+      expect(
+        existsSyncStub.args[1][0]
+          .split('/')
+          .slice(-3)
+          .join('/'),
+      ).to.equal(`debugger-256/lib/${confFileName}.js`);
+      expect(
+        existsSyncStub.args[3][0]
+          .split('/')
+          .slice(-2)
+          .join('/'),
+      ).to.equal(`debugger-256/${confFileName}.js`);
     });
 
     it('Should output an internal message if file found and first time loading configuration', () => {
@@ -119,7 +143,7 @@ describe('Settings', () => {
     });
 
     it('Should assign JSON to settings configuration if parsed correctly', () => {
-      const validJson = { key1: "val1" };
+      const validJson = { key1: 'val1' };
       existsSyncStub.returns(true);
       readFileStub.returns(validJson);
       settings.loadConfFile();

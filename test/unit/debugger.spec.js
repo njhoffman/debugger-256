@@ -1,11 +1,13 @@
 describe('Debugger', () => {
   let sandbox;
   describe('createDebug', () => {
-    let createDebug, logStub, addSubsystemStub;
-    let conf = {
-      "subsystems" : {
-        'app' : 6
-      }
+    let createDebug;
+    let logStub;
+    let addSubsystemStub;
+    const conf = {
+      subsystems: {
+        app: 6,
+      },
     };
     beforeEach(() => {
       sandbox = sinon.createSandbox();
@@ -14,10 +16,10 @@ describe('Debugger', () => {
       createDebug = proxyquire('../lib/debugger', {
         './settings': {
           addSubsystem: addSubsystemStub,
-          getConf: () => conf
+          getConf: () => conf,
         },
-        './parser' : () => '',
-        './console': { log: logStub }
+        './parser': () => '',
+        './console': { log: logStub },
       });
     });
 
@@ -33,8 +35,17 @@ describe('Debugger', () => {
     it('Should return an object with 8 logging methods, init, reset and showColors', () => {
       const ret = createDebug();
       ret.should.have.all.keys(
-        '_dbg', 'fatal', 'error', 'warn', 'log', 'info',
-        'debug', 'trace', 'init', 'reset', 'showColors'
+        '_dbg',
+        'fatal',
+        'error',
+        'warn',
+        'log',
+        'info',
+        'debug',
+        'trace',
+        'init',
+        'reset',
+        'showColors',
       );
     });
 
@@ -58,7 +69,9 @@ describe('Debugger', () => {
   });
 
   describe('init', () => {
-    let settingsInitStub, pjsonInitStub, init;
+    let settingsInitStub;
+    let pjsonInitStub;
+    let init;
 
     beforeEach(() => {
       sandbox = sinon.createSandbox();
@@ -66,7 +79,7 @@ describe('Debugger', () => {
       pjsonInitStub = sandbox.stub();
       init = proxyquire('../lib/debugger', {
         './settings': { initSettings: settingsInitStub },
-        'prettyjson-256': { init: pjsonInitStub }
+        'prettyjson-256': { init: pjsonInitStub },
       })().init;
     });
     afterEach(() => {
@@ -85,5 +98,4 @@ describe('Debugger', () => {
       expect(pjsonInitStub).to.have.been.calledWith('settings initialized');
     });
   });
-
 });
