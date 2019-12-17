@@ -1,0 +1,18 @@
+{
+  "arrowParens": "always",
+  "rcVerbose": false,
+  "endOfLine": "lf",
+  "semi": true,
+  "trailingComma": "all",
+  "singleQuote": true,
+  "jsxSingleQuote": true,
+  "printWidth": 120,
+  "overrides": [
+    {
+      "files": "*.json",
+      "options": {
+        "printWidth": 200
+      }
+    }
+  ]
+}
