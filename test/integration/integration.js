@@ -156,7 +156,7 @@ describe('Integration', () => {
       const logs = logStub.args;
 
       createDebug(ss).fatal(li);
-      testOutput(logs[0][0], '12430d02');
+      testOutput(logs[0][0], '1245389b');
     });
 
     it('Should output correct colors from initial options determined by log level error', () => {
@@ -165,7 +165,7 @@ describe('Integration', () => {
       const logs = logStub.args;
 
       createDebug(ss).error(li);
-      testOutput(logs[0][0], '12430c99');
+      testOutput(logs[0][0], '12453832');
     });
 
     it('Should output correct colors from initial options determined by log level warn', () => {
@@ -174,7 +174,7 @@ describe('Integration', () => {
       const logs = logStub.args;
 
       createDebug(ss).warn(li);
-      testOutput(logs[0][0], '12430cd4');
+      testOutput(logs[0][0], '1245386d');
     });
 
     it('Should output correct colors from initial options determined by log level log', () => {
@@ -183,7 +183,7 @@ describe('Integration', () => {
       const logs = logStub.args;
 
       createDebug(ss).log(li);
-      testOutput(logs[0][0], '1242da6d');
+      testOutput(logs[0][0], '12450374');
     });
 
     it('Should output correct colors from initial options determined by log level info', () => {
@@ -192,7 +192,7 @@ describe('Integration', () => {
       const logs = logStub.args;
 
       createDebug(ss).info(li);
-      testOutput(logs[0][0], '12430c87');
+      testOutput(logs[0][0], '12453820', {});
     });
 
     it('Should output correct colors from initial options determined by log level debug', () => {
@@ -201,7 +201,7 @@ describe('Integration', () => {
       const logs = logStub.args;
 
       createDebug(ss).debug(li);
-      testOutput(logs[0][0], '12430ccb');
+      testOutput(logs[0][0], '12453864', {});
     });
 
     it('Should output correct colors from initial options determined by log level trace', () => {
@@ -210,7 +210,7 @@ describe('Integration', () => {
       const logs = logStub.args;
 
       createDebug(ss).trace(li);
-      testOutput(logs[0][0], '12430ca6');
+      testOutput(logs[0][0], '1245383f');
     });
 
     /* custom options */
@@ -226,7 +226,7 @@ describe('Integration', () => {
       });
 
       createDebug(ss).fatal(li);
-      testOutput(logs[0][0], '1245c477');
+      testOutput(logs[0][0], '124805c9');
     });
 
     it('Should output correct colors with customOptions determined by log level error', () => {
@@ -240,7 +240,7 @@ describe('Integration', () => {
       });
 
       createDebug(ss).error(li);
-      testOutput(logs[0][0], '1245c4c8');
+      testOutput(logs[0][0], '1248061a');
     });
 
     it('Should output correct colors with customOptions determined by log level warn', () => {
@@ -254,7 +254,7 @@ describe('Integration', () => {
       });
 
       createDebug(ss).warn(li);
-      testOutput(logs[0][0], '1245fc70');
+      testOutput(logs[0][0], '12484054');
     });
 
     it('Should output correct colors with customOptions determined by log level log', () => {
@@ -268,7 +268,7 @@ describe('Integration', () => {
       });
 
       createDebug(ss).log(li);
-      testOutput(logs[0][0], '1245fca5');
+      testOutput(logs[0][0], '12484089');
     });
 
     it('Should output correct colors with customOptions determined by log level info', () => {
@@ -282,7 +282,7 @@ describe('Integration', () => {
       });
 
       createDebug(ss).info(li);
-      testOutput(logs[0][0], '1245fcbd');
+      testOutput(logs[0][0], '124840a1');
     });
 
     it('Should output correct colors with customOptions determined by log level debug', () => {
@@ -296,7 +296,7 @@ describe('Integration', () => {
       });
 
       createDebug(ss).debug(li);
-      testOutput(logs[0][0], '1245fca4');
+      testOutput(logs[0][0], '12484088');
     });
 
     it('Should output correct colors with customOptions determined by log level trace', () => {
@@ -310,7 +310,7 @@ describe('Integration', () => {
       });
 
       createDebug(ss).trace(li);
-      testOutput(logs[0][0], '1245fcec');
+      testOutput(logs[0][0], '124840d0');
     });
 
     it('Should output inline string coloring when initialized correctly', () => {
