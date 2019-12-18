@@ -1,0 +1,7 @@
+{"name":"api-scheduler","hostname":"thanatos","pid":28071,"subsystem":"middleware","level":20,"_logId":"cefda801-97d6-46a3-8996-4107fde350fc","msg":"loaded logger configuration for api-scheduler (middleware)","time":"2019-12-18T19:16:34.356Z","v":0}
+{"name":"api-scheduler","hostname":"thanatos","pid":28071,"subsystem":"middleware","level":30,"_logId":"edb9a169-0c80-4e53-bc62-8d0425ff07f5","msg":"Swagger UI running on localhost:3000/","time":"2019-12-18T19:16:34.599Z","v":0}
+{"name":"api-scheduler","hostname":"thanatos","pid":28071,"subsystem":"knex","level":30,"_logId":"dd43ec6e-35ca-41a9-8720-5aa04aedb1fe","msg":"Knex connecting to 'apidb' on localhost:5432","time":"2019-12-18T19:16:34.656Z","v":0}
+{"name":"api-scheduler","hostname":"thanatos","pid":28071,"subsystem":"server","level":20,"_logId":"8c42dddf-df85-412b-bc20-6c836a24e55f","msg":"Initializing Server on port 3000...","time":"2019-12-18T19:16:34.743Z","v":0}
+{"name":"api-scheduler","hostname":"thanatos","pid":28071,"subsystem":"middleware","level":30,"_logId":"31bbf180-2eb6-41e0-b538-ef8f35c18bc9","msg":"Initializing middleware ...","time":"2019-12-18T19:16:34.744Z","v":0}
+{"name":"api-scheduler","hostname":"thanatos","pid":28071,"subsystem":"server","level":30,"_logId":"0d3a783b-1d49-4740-930a-d9adb1473305","msg":"API is running on port: 3000","time":"2019-12-18T19:16:34.752Z","v":0}
+

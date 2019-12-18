@@ -1,4 +1,3 @@
-test/unit
---recursive
+test/entry
 --require test/setup.js
 --exit
