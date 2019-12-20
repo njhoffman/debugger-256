@@ -1,8 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const showOutput = false;
-
 const options = {
   /* prettyjson-256 options */
   alphabetizeKeys: false,
@@ -113,6 +111,8 @@ const stripAnsi = (data) => {
   return data.replace(ansiRE, '');
 };
 
+const showOutput = false;
+
 module.exports = () => {
   describe('Integration', () => {
     let sandbox;
@@ -120,16 +120,19 @@ module.exports = () => {
     let warnStub;
 
     describe('General Output', () => {
-      let createDebug;
+      let output;
+      let reset;
+      let init;
+
       beforeEach(() => {
         sandbox = sinon.createSandbox();
         logStub = sandbox.stub();
         warnStub = sandbox.stub();
-        createDebug = proxyquireNoCache('../lib/debugger', {
+        ({ output, reset, init } = proxyquireNoCache('../lib/debugger', {
           './console': { log: logStub, warn: warnStub },
-        });
-        createDebug().reset();
-        createDebug().init(options);
+        }));
+        reset();
+        init(options);
       });
 
       afterEach(() => {
@@ -138,22 +141,22 @@ module.exports = () => {
 
       it('Should output correct indentation depending on initialized subsystems 1', () => {
         const expected = '1245ddc8';
-        createDebug(testSubs[5]).log('');
-        createDebug(testSubs[1]).log('');
-        createDebug(testSubs[0]).log(loremIpsum[0]);
-        const output = stripAnsi(logStub.args[2][0]);
-        showOutput && console.log(output);
-        expect(checksum(output)).to.equal(expected);
+        output(3, testSubs[5], '');
+        output(3, testSubs[1], '');
+        output(3, testSubs[0], loremIpsum[0]);
+        const strippedOutput = stripAnsi(logStub.args[2][0]);
+        showOutput && console.log(strippedOutput);
+        expect(checksum(strippedOutput)).to.equal(expected);
       });
 
       it('Should output correct indentation depending on initialized subsystems 2', () => {
         const expected = '12420f90';
-        createDebug(testSubs[3]).log('');
-        createDebug(testSubs[1]).log('');
-        createDebug(testSubs[0]).log(loremIpsum[0]);
-        const output = stripAnsi(logStub.args[2][0]);
-        showOutput && console.log(output);
-        expect(checksum(output)).to.equal(expected);
+        output(3, testSubs[3], '');
+        output(3, testSubs[1], '');
+        output(3, testSubs[0], loremIpsum[0]);
+        const strippedOutput = stripAnsi(logStub.args[2][0]);
+        showOutput && console.log(strippedOutput);
+        expect(checksum(strippedOutput)).to.equal(expected);
       });
 
       it('Should output correct colors from initial options determined by log level fatal', () => {
@@ -161,7 +164,7 @@ module.exports = () => {
         const li = loremIpsum[3];
         const logs = logStub.args;
 
-        createDebug(ss).fatal(li);
+        output(0, ss, li);
         testOutput(logs[0][0], '1245389b');
       });
 
@@ -170,7 +173,7 @@ module.exports = () => {
         const li = loremIpsum[3];
         const logs = logStub.args;
 
-        createDebug(ss).error(li);
+        output(1, ss, li);
         testOutput(logs[0][0], '12453832');
       });
 
@@ -179,7 +182,7 @@ module.exports = () => {
         const li = loremIpsum[3];
         const logs = logStub.args;
 
-        createDebug(ss).warn(li);
+        output(2, ss, li);
         testOutput(logs[0][0], '1245386d');
       });
 
@@ -188,7 +191,7 @@ module.exports = () => {
         const li = loremIpsum[3];
         const logs = logStub.args;
 
-        createDebug(ss).log(li);
+        output(3, ss, li);
         testOutput(logs[0][0], '12450374');
       });
 
@@ -197,7 +200,7 @@ module.exports = () => {
         const li = loremIpsum[3];
         const logs = logStub.args;
 
-        createDebug(ss).info(li);
+        output(4, ss, li);
         testOutput(logs[0][0], '12453820', {});
       });
 
@@ -206,7 +209,7 @@ module.exports = () => {
         const li = loremIpsum[3];
         const logs = logStub.args;
 
-        createDebug(ss).debug(li);
+        output(5, ss, li);
         testOutput(logs[0][0], '12453864', {});
       });
 
@@ -215,23 +218,42 @@ module.exports = () => {
         const li = loremIpsum[3];
         const logs = logStub.args;
 
-        createDebug(ss).trace(li);
+        output(6, ss, li);
         testOutput(logs[0][0], '1245383f');
       });
+    });
 
-      /* custom options */
+    describe('Custom Options', () => {
+      let output;
+      let reset;
+      let init;
+
+      beforeEach(() => {
+        sandbox = sinon.createSandbox();
+        logStub = sandbox.stub();
+        warnStub = sandbox.stub();
+        ({ output, reset, init } = proxyquireNoCache('../lib/debugger', {
+          './console': { log: logStub, warn: warnStub },
+        }));
+        reset();
+        init(options);
+      });
+
+      afterEach(() => {
+        sandbox.restore();
+      });
 
       it('Should output correct colors with customOptions determined by log level fatal', () => {
         const ss = testSubs[5];
         const li = loremIpsum[2];
         const logs = logStub.args;
-        createDebug().init({
+        init({
           customColors: {
             fatal: { fg: [0, 0, 5] },
           },
         });
 
-        createDebug(ss).fatal(li);
+        output(0, ss, li);
         testOutput(logs[0][0], '124805c9');
       });
 
@@ -239,13 +261,13 @@ module.exports = () => {
         const ss = testSubs[5];
         const li = loremIpsum[2];
         const logs = logStub.args;
-        createDebug().init({
+        init({
           customColors: {
             error: { fg: [2, 0, 4] },
           },
         });
 
-        createDebug(ss).error(li);
+        output(1, ss, li);
         testOutput(logs[0][0], '1248061a');
       });
 
@@ -253,13 +275,13 @@ module.exports = () => {
         const ss = testSubs[5];
         const li = loremIpsum[2];
         const logs = logStub.args;
-        createDebug().init({
+        init({
           customColors: {
             warn: { fg: [2, 2, 4] },
           },
         });
 
-        createDebug(ss).warn(li);
+        output(2, ss, li);
         testOutput(logs[0][0], '12484054');
       });
 
@@ -267,13 +289,13 @@ module.exports = () => {
         const ss = testSubs[5];
         const li = loremIpsum[2];
         const logs = logStub.args;
-        createDebug().init({
+        init({
           customColors: {
             log: { fg: [4, 2, 0] },
           },
         });
 
-        createDebug(ss).log(li);
+        output(3, ss, li);
         testOutput(logs[0][0], '12484089');
       });
 
@@ -281,13 +303,13 @@ module.exports = () => {
         const ss = testSubs[5];
         const li = loremIpsum[2];
         const logs = logStub.args;
-        createDebug().init({
+        init({
           customColors: {
             info: { fg: [4, 2, 2] },
           },
         });
 
-        createDebug(ss).info(li);
+        output(4, ss, li);
         testOutput(logs[0][0], '124840a1');
       });
 
@@ -295,13 +317,13 @@ module.exports = () => {
         const ss = testSubs[5];
         const li = loremIpsum[2];
         const logs = logStub.args;
-        createDebug().init({
+        init({
           customColors: {
             debug: { fg: [4, 3, 3] },
           },
         });
 
-        createDebug(ss).debug(li);
+        output(5, ss, li);
         testOutput(logs[0][0], '12484088');
       });
 
@@ -309,40 +331,36 @@ module.exports = () => {
         const ss = testSubs[5];
         const li = loremIpsum[2];
         const logs = logStub.args;
-        createDebug().init({
+        init({
           customColors: {
             trace: { fg: [4, 4, 3] },
           },
         });
 
-        createDebug(ss).trace(li);
+        output(6, ss, li);
         testOutput(logs[0][0], '124840d0');
       });
-
-      it('Should output inline string coloring when initialized correctly', () => {
-        const dbg = createDebug('test');
-        dbg.init({ customColors: { testColor: { fg: [3, 0, 3] } } });
-        dbg.log('Inline strings %can be colored% easily with the right initialization', { color: 'testColor' });
-        testOutput(logStub.args[0][0], '123bf681');
-      });
-
-      it('Should produce a warning if inline string color syntax used without definition', () => {});
     });
+
+    //   it('Should produce a warning if inline string color syntax used without definition', () => {});
 
     describe('Filtering', () => {
       let subs = [];
-      let createDebug;
+      let logStub;
+      let output;
+      let reset;
+      let init;
       let mockConf = {};
       beforeEach(() => {
         sandbox = sinon.createSandbox();
         logStub = sandbox.stub();
         warnStub = sandbox.stub();
-        createDebug = proxyquireNoCache('../lib/debugger', {
+        ({ output, reset, init } = proxyquireNoCache('../lib/debugger', {
           './console': { log: logStub, warn: warnStub },
           './settings': { getConf: () => mockConf, getSubsystems: () => subs },
-        });
-        createDebug().reset();
-        createDebug().init(options);
+        }));
+        reset();
+        init(options);
       });
 
       afterEach(() => {
@@ -352,14 +370,13 @@ module.exports = () => {
       it('Should not output messages with verbosity higher than subsystem configuration level', () => {
         mockConf = { subsystems: { app: 3 } };
         const li = loremIpsum[2];
-        const logs = logStub.args;
-        createDebug('app').fatal(li);
-        createDebug('app').error(li);
-        createDebug('app').warn(li);
-        createDebug('app').info(li);
-        createDebug('app').log(li);
-        createDebug('app').debug(li);
-        createDebug('app').trace(li);
+        output(0, 'app', li);
+        output(1, 'app', li);
+        output(2, 'app', li);
+        output(3, 'app', li);
+        output(4, 'app', li);
+        output(5, 'app', li);
+        output(6, 'app', li);
         expect(logStub).to.have.callCount(4);
       });
 
@@ -367,14 +384,13 @@ module.exports = () => {
         mockConf = { subsystems: { app: { '*': 2 } } };
         subs = ['app:config'];
         const li = loremIpsum[0];
-        const logs = logStub.args;
-        createDebug('app:config').fatal(li);
-        createDebug('app:config').error(li);
-        createDebug('app:config').warn(li);
-        createDebug('app:config').info(li);
-        createDebug('app:config').log(li);
-        createDebug('app:config').debug(li);
-        createDebug('app:config').trace(li);
+        output(0, 'app:config', li);
+        output(1, 'app:config', li);
+        output(2, 'app:config', li);
+        output(3, 'app:config', li);
+        output(4, 'app:config', li);
+        output(5, 'app:config', li);
+        output(6, 'app:config', li);
         expect(logStub).to.have.callCount(3);
       });
     });
